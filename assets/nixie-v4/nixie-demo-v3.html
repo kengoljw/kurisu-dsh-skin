@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divergence Meter v3 — 物理级辉光管组件</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     DESIGN TOKENS — 统一自 glowbox @glowbox/neon gas.ts (neon preset)
+     线性空间数值 → sRGB，保证 CSS 与 Canvas/WebGL 颜色一致
+     ============================================================ */
+  :root {
+    /* 辉光色系（线性 RGB × 255 → sRGB 近似） */
+    --nx-color:   rgb(255,  82,  31);  /* [1, 0.32, 0.12] 主辉光 */
+    --nx-ink:     rgb(158,  31,  13);  /* [0.62, 0.12, 0.05] 吸墨/暗态 */
+    --nx-core-w:  0.72;                /* 核心向白混合度 */
+    --nx-unlit:   rgb(158, 102,  87);  /* [0.62, 0.4, 0.34] 熄灭管壁 */
+    --nx-coated:  false;               /* phosphor-coated: false */
+
+    /* 派生 token（直接在 CSS 里用） */
+    --glow-core:   #fff3d6;            /* 核心高光（core 白度叠加） */
+    --glow-main:   var(--nx-color);    /* 主辉光 */
+    --glow-halo:   #ff8800;            /* 中距离晕 */
+    --glow-reach:  #ff5500;            /* 远距离晕 */
+    --glow-far:    rgba(255, 85, 0, 0.45); /* 极远场 bloom */
+    --off-cathode: rgba(158, 102, 87, 0.45); /* 熄灭阴极 */
+    --wire-dim:    rgba(94, 90, 82, 0.35);   /* 未点亮导线/支架 */
+
+    /* 环境 */
+    --bg:              #0a0d11;
+    --panel-1:         #1f2833;
+    --panel-2:         #141a21;
+    --teal:            #3ed9c5;
+    --teal-dim:        rgba(62,217,197,.35);
+  }
+
+  /* ============================================================
+     单笔画 SVG 数字字形（源自 owenisas/steins-gate-world-line/assets/meter/nixie.svg）
+     每个数字是一条连续弯线，stroke="currentColor"，线宽由 CSS 控制
+     ============================================================ */
+  .nx-sprites { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .nx-sprites svg { display: none; }
+
+  /* ============================================================
+     基础重置
+     ============================================================ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px;
+    background: radial-gradient(ellipse 1200px 600px at 50% 25%, #121820 0%, var(--bg) 55%), var(--bg);
+    font-family: "Share Tech Mono", "Noto Sans SC", monospace; color: #d0d8e0;
+    overflow: hidden;
+  }
+
+  /* CRT 扫描线 + 暗角 */
+  .crt { position: fixed; inset: 0; pointer-events: none; z-index: 100;
+    background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.65) 100%); }
+
+  /* ============================================================
+     底座面板
+     ============================================================ */
+  .meter {
+    position: relative; display: flex; align-items: flex-end; gap: 22px;
+    padding: 38px 44px 30px; border-radius: 16px;
+    background: linear-gradient(180deg, var(--panel-1) 0%, var(--panel-2) 70%, #0d1116 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.10), inset 0 -3px 10px rgba(0,0,0,.7),
+      0 28px 70px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.03),
+      /* 整个面板的暖橙环境光晕 */
+      0 0 120px rgba(255,130,40,.10),
+      0 40px 80px -20px rgba(255,130,50,.12);
+  }
+  .meter::before, .meter::after {
+    content: ""; position: absolute; top: 12px; width: 10px; height: 10px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #566372, #0f1318 75%);
+    box-shadow: inset 0 -1px 2px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.07);
+  }
+  .meter::before { left: 14px; } .meter::after { right: 14px; }
+
+  /* ============================================================
+     单支辉光管 —— 三层分离架构（关键修正）
+     结构：.digits(z1) → .glass(z2, overflow:visible) → ::before(z3, 外晕)
+     ============================================================ */
+  .tube {
+    position: relative; width: 68px; height: 140px;
+    display: flex; flex-direction: column; align-items: center;
+    /* 管级种子：用于确定性磨损/闪烁 */
+    --tube-seed: 0;
+    --tube-age:  0.12;  /* 0 全新 ~ 1 报废，默认 12% 磨损 */
+  }
+
+  /* ── 1️⃣ 数字层（最底，z-index:1）单笔画 SVG <use> ── */
+  .digits {
+    position: relative; z-index: 1; height: 112px; width: 48px;
+    display: grid; place-items: center;
+  }
+  .digits svg {
+    grid-area: 1 / 1; width: 48px; height: 112px;
+    overflow: visible; /* 关键：辉光溢出不被切 */
+  }
+  .digits use {
+    /* 每个阴极层：颜色、描边、变换由 data-layer 推导 */
+    transform-origin: 24px 56px; /* viewBox 中心 */
+    transition: opacity .12s, filter .12s;
+  }
+  /* 熄灭态：极淡的金属暗线，真实辉光管只看到一点导线残影 */
+  .digits use:not(.lit) {
+    stroke: var(--wire-dim); stroke-width: 2.4; opacity: 0.07;
+    filter: none;
+  }
+  /* 点亮态：加粗灯丝 + 更强的多层 drop-shadow bloom（CSS filter 不受 overflow 限制） */
+  .digits use.lit {
+    stroke: var(--glow-core); stroke-width: 3.6; opacity: 1;
+    filter:
+      drop-shadow(0 0 1.5px #ffffff)
+      drop-shadow(0 0 4px   var(--glow-core))
+      drop-shadow(0 0 10px  var(--glow-main))
+      drop-shadow(0 0 22px  var(--glow-halo))
+      drop-shadow(0 0 48px  var(--glow-reach))
+      drop-shadow(0 0 90px  var(--glow-far))
+      drop-shadow(0 0 140px rgba(255, 85, 0, .30))
+      brightness(1.15);
+    animation: flicker 8s infinite;
+  }
+  /* 纵深缩放：模拟 10 层阴极前后堆叠（STACK = '1234567890'，data-layer 1=前 9=后） */
+  .digits use[data-layer="1"]  { transform: translateY(3px) scale(1.000); }
+  .digits use[data-layer="2"]  { transform: translateY(3px) scale(0.994); }
+  .digits use[data-layer="3"]  { transform: translateY(3px) scale(0.988); }
+  .digits use[data-layer="4"]  { transform: translateY(3px) scale(0.982); }
+  .digits use[data-layer="5"]  { transform: translateY(3px) scale(0.976); }
+  .digits use[data-layer="6"]  { transform: translateY(3px) scale(0.970); }
+  .digits use[data-layer="7"]  { transform: translateY(3px) scale(0.964); }
+  .digits use[data-layer="8"]  { transform: translateY(3px) scale(0.958); }
+  .digits use[data-layer="9"]  { transform: translateY(3px) scale(0.952); }
+  .digits use[data-layer="10"] { transform: translateY(3px) scale(0.946); }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    90% { opacity: 1; }
+    91% { opacity: 0.75; }
+    92% { opacity: 1; }
+    94% { opacity: 0.85; }
+    95% { opacity: 1; }
+  }
+
+  /* ── 2️⃣ 玻璃管（中间，z-index:2）只做折射/高光，无背景色，overflow:visible ── */
+  .glass {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    z-index: 2; width: 52px; height: 112px; border-radius: 24px / 28px;
+    background:
+      linear-gradient(95deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.02) 15%,
+        transparent 35%, transparent 65%, rgba(255,179,64,.04) 100%),
+      radial-gradient(ellipse at 50% 8%, rgba(255,255,255,.18) 0%, transparent 60%);
+    box-shadow:
+      inset 0 0 18px rgba(0,0,0,.55), inset 3px 0 6px rgba(255,255,255,.05),
+      inset -4px 0 10px rgba(255,136,0,.08), 0 0 0 1px rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.06); pointer-events: none; overflow: visible;
+  }
+  .glass::before {
+    content: ""; position: absolute; top: 4px; left: 14%; width: 28%; height: 10px;
+    border-radius: 50%; background: linear-gradient(180deg, rgba(255,255,255,.25), transparent);
+    filter: blur(1.5px); pointer-events: none;
+  }
+  /* 点亮管的玻璃被内部辉光微微染色 */
+  .tube.lit .glass {
+    box-shadow:
+      inset 0 0 18px rgba(0,0,0,.45), inset 3px 0 6px rgba(255,255,255,.05),
+      inset -4px 0 10px rgba(255,136,0,.08),
+      inset 0 0 30px rgba(255,150,60,.16),
+      0 0 0 1px rgba(255,255,255,.04);
+  }
+
+  /* ── 3️⃣ 外晕层（最外）双伪元素叠加大范围 bloom，随 .lit 显隐 ── */
+  /* 内层晕：紧包裹管身 */
+  .tube::before {
+    content: ""; position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 3; width: 96px; height: 150px; border-radius: 32px / 44px;
+    background: radial-gradient(ellipse at center,
+      rgba(255,190,90,.34) 0%,
+      rgba(255,150,50,.20) 28%,
+      rgba(255,110,20,.09) 52%,
+      transparent 78%);
+    filter: blur(10px); opacity: 0; pointer-events: none; transition: opacity .25s;
+    mix-blend-mode: screen;
+  }
+  /* 外层晕：更大更淡的远场辉光 + 底座光池 */
+  .tube::after {
+    content: ""; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 0; width: 160px; height: 210px; border-radius: 50%;
+    background:
+      radial-gradient(ellipse 90px 130px at 50% 40%,
+        rgba(255,140,40,.16) 0%, rgba(255,100,20,.06) 45%, transparent 75%),
+      /* 光在底座上的汇聚 */
+      radial-gradient(ellipse 70px 22px at 50% 96%,
+        rgba(255,150,60,.30) 0%, rgba(255,110,30,.10) 55%, transparent 80%);
+    filter: blur(14px); opacity: 0; pointer-events: none; transition: opacity .25s;
+    mix-blend-mode: screen;
+  }
+  .tube.lit::before, .tube.lit::after { opacity: 1; }
+
+  /* 管脚底座 */
+  .socket {
+    position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
+    z-index: 4; width: 58px; height: 28px; border-radius: 7px;
+    background: linear-gradient(180deg, #3d4856, #15191f 75%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 4px 10px rgba(0,0,0,.7);
+  }
+
+  /* 小数点管：单独字形 */
+  .tube.dot .digits use { display: none; }
+  .tube.dot .digits use.nx-dot { display: block; }
+  .tube.dot .digits use.nx-dot.lit {
+    stroke: var(--glow-core); stroke-width: 3.6;
+    filter: drop-shadow(0 0 2px #ffffff) drop-shadow(0 0 8px var(--glow-core))
+      drop-shadow(0 0 18px var(--glow-main)) drop-shadow(0 0 36px var(--glow-halo))
+      drop-shadow(0 0 60px var(--glow-reach)) brightness(1.15);
+    transform: translateY(22px) scale(1);
+  }
+  .tube.dot .digits use.nx-dot:not(.lit) { stroke: var(--wire-dim); stroke-width: 2; opacity: 0.25; transform: translateY(22px); }
+
+  /* ============================================================
+     标签与控件
+     ============================================================ */
+  .label { letter-spacing: .4em; font-size: 12px; color: rgba(255,255,255,.28); text-transform: uppercase; }
+  .label b { color: var(--teal); font-weight: normal; }
+  .controls { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  button {
+    font-family: inherit; font-size: 13px; letter-spacing: .1em; color: var(--teal);
+    background: rgba(62,217,197,.05); border: 1px solid rgba(62,217,197,.3);
+    border-radius: 4px; padding: 10px 22px; cursor: pointer; transition: all .15s;
+  }
+  button:hover { background: rgba(62,217,197,.12); box-shadow: 0 0 18px rgba(62,217,197,.25); }
+  button.active { color: var(--bg); background: var(--teal); border-color: var(--teal); }
+</style>
+</head>
+<body>
+
+<div class="crt"></div>
+
+<!-- 单笔画 SVG 精灵表（内联，无外部请求） -->
+<div class="nx-sprites" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="nx-0" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.952) translate(-30 -50)" data-layer="8"><path d="M11 36 A19 19 0 0 1 49 36 L49 64 A19 19 0 0 1 11 64 Z"/></g></symbol>
+  <symbol id="nx-1" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g data-layer="0"><path d="M19.5 28.5 L30 17 L30 83"/></g></symbol>
+  <symbol id="nx-2" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.982) translate(-30 -50)" data-layer="3"><path d="M11 36 A19 19 0 1 1 43.66 49.2 L11 83 L49 83"/></g></symbol>
+  <symbol id="nx-3" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.970) translate(-30 -50)" data-layer="5"><path d="M16.84 26.21 A14 14 0 1 1 30 45 A19 19 0 1 1 12.15 70.5"/></g></symbol>
+  <symbol id="nx-4" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.988) translate(-30 -50)" data-layer="2"><path d="M39 83 L39 17 L11 63 L49 63"/></g></symbol>
+  <symbol id="nx-5" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.976) translate(-30 -50)" data-layer="4"><path d="M47 17 L16 17 L14.44 53.1 A19 19 0 1 1 13.55 73.5"/></g></symbol>
+  <symbol id="nx-6" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.958) translate(-30 -50)" data-layer="7"><path d="M43.86 17.18 A36 47 0 0 0 11 64 A19 19 0 1 0 49 64 A19 19 0 1 0 11 64"/></g></symbol>
+  <symbol id="nx-7" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.994) translate(-30 -50)" data-layer="1"><path d="M11 17 L49 17 Q33 42 28 83"/></g></symbol>
+  <symbol id="nx-8" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.946) translate(-30 -50)" data-layer="9"><path d="M15 31.5 A15 14.5 0 0 1 45 31.5 A15 14.5 0 0 1 15 31.5 Z"/><path d="M11.5 64.5 A18.5 18.5 0 0 1 48.5 64.5 A18.5 18.5 0 0 1 11.5 64.5 Z"/></g></symbol>
+  <symbol id="nx-9" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(30 50) scale(0.964) translate(-30 -50)" data-layer="6"><path d="M16.14 82.82 A36 47 0 0 0 49 36 A19 19 0 1 0 11 36 A19 19 0 1 0 49 36"/></g></symbol>
+  <symbol id="nx-dot" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g data-layer="-1"><circle cx="30" cy="80" r="2" fill="currentColor"/></g></symbol>
+  <symbol id="nx-q" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g data-layer="-1"><path d="M15.9 26.87 A15 15 0 1 1 41.71 41.38 L30 56 L30 63"/><circle cx="30" cy="80" r="2" fill="currentColor"/></g></symbol>
+  <symbol id="nx-dash" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <g data-layer="-1"><path d="M18 50 L42 50"/></g></symbol>
+  <symbol id="nx-blank" viewBox="0 0 60 100" fill="none"></symbol>
+</svg>
+</div>
+
+<div class="label">DIVERGENCE <b id="modeLabel">METER</b> · WORLD LINE <b id="lineLabel">Steins Gate</b></div>
+
+<div class="meter" id="meter"></div>
+
+<div class="controls">
+  <button id="btnRandom">随机世界线</button>
+  <button id="btnSteins" class="active">1.048596 — Steins Gate</button>
+  <button id="btnClock">时钟模式</button>
+</div>
+
+<script>
+/* ============================================================
+   物理级动画时序（源自 owenisas meter.js DESIGN.md section 6）
+   ============================================================ */
+const TIMING = {
+  stepMs:   { min: 45, max: 70 },   // 随机步进间隔
+  firstLock: 340,                   // 首管锁定时间
+  lockGap:  { min: 40, max: 90 },   // 后续管间隔
+  pulseMs:  120                     // 锁定过亮脉冲
+};
+
+/* ============================================================
+   确定性磨损/闪烁（源自 glowbox wear.ts）
+   种子哈希：无 Math.random，同一管每次刷新相位固定
+   ============================================================ */
+function unitHash(a, b, c) {
+  let h = Math.imul(a | 0, 0x27d4eb2d) ^ Math.imul(b | 0, 0x165667b1) ^ Math.imul(c | 0, 0x9e3779b1);
+  h = Math.imul(h ^ (h >>> 15), 0x85ebca6b);
+  h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+function flickerLevel(tubeIndex, seed, t) {
+  const wear = 0.5 + 0.5 * Math.sin(seed + tubeIndex * 12.9898);
+  if (wear < 0.7) return 1;
+  const k = Math.floor(t / 1.4);
+  if (unitHash(seed * 1000, k, 1) > 0.85) return 1;
+  const at = k * 1.4 + unitHash(seed * 1000, k, 1) * 1.0;
+  if (t < at) return 1;
+  return Math.min(1, 0.05 + 0.3 * unitHash(seed * 1000, k, 2) + (t - at) * 6);
+}
+
+/* ============================================================
+   组件构建
+   ============================================================ */
+const meterEl = document.getElementById('meter');
+const TUBE_COUNT = 8;
+const DOT_INDEX = 1;            // 第 2 支为小数点管
+const SYMBOL_MAP = {
+  '0': 'nx-0', '1': 'nx-1', '2': 'nx-2', '3': 'nx-3', '4': 'nx-4',
+  '5': 'nx-5', '6': 'nx-6', '7': 'nx-7', '8': 'nx-8', '9': 'nx-9',
+  '.': 'nx-dot', '?': 'nx-q', '-': 'nx-dash', ' ': 'nx-blank'
+};
+
+// STACK 顺序：前→后（物理阴极顺序），data-layer 1=最前 10=最后
+const STACK = '1234567890';
+
+const tubes = [];
+for (let i = 0; i < TUBE_COUNT; i++) {
+  const tube = document.createElement('div');
+  tube.className = 'tube' + (i === DOT_INDEX ? ' dot' : '');
+  tube.style.setProperty('--tube-seed', (1337 + i * 911).toString());
+  tube.style.setProperty('--tube-age', '0.12'); // 12% 磨损
+
+  // 数字层：10 个 <use> 叠放，data-layer 对应深度
+  let digitsHtml = '<div class="digits">';
+  if (i === DOT_INDEX) {
+    digitsHtml += `<svg><use class="nx-dot" href="#nx-dot" data-layer="0"/></svg>`;
+  } else {
+    for (let d = 0; d < 10; d++) {
+      const ch = STACK[d];
+      digitsHtml += `<svg><use href="#${SYMBOL_MAP[ch]}" data-layer="${d + 1}"/></svg>`;
+    }
+  }
+  digitsHtml += '</div>';
+
+  tube.innerHTML = digitsHtml + `<div class="glass"></div><div class="socket"></div>`;
+  meterEl.appendChild(tube);
+
+  const uses = [...tube.querySelectorAll('.digits use')];
+  tubes.push({
+    el: tube,
+    uses,
+    current: null,
+    seed: 1337 + i * 911,
+    age: 0.12
+  });
+}
+
+/* ============================================================
+   点亮某管某字符
+   ============================================================ */
+function light(tube, char) {
+  tube.uses.forEach(u => {
+    const isTarget = u.getAttribute('href') === '#' + SYMBOL_MAP[char];
+    u.classList.toggle('lit', isTarget);
+    // 确定性闪烁：把 flickerLevel 算进 animation-delay（近似）
+    if (isTarget) {
+      const phase = (tube.seed * 0.001 + performance.now() * 0.001) % 8;
+      u.style.animationDelay = phase.toFixed(2) + 's';
+    }
+  });
+  tube.current = char;
+  tube.el.classList.toggle('lit', char !== null && char !== ' ');
+}
+
+/* ============================================================
+   物理级滚动：左→右依次锁定，随机步进，过亮脉冲
+   ============================================================ */
+function rollTo(values) {
+  tubes.forEach((tube, i) => {
+    if (i === DOT_INDEX) { light(tube, '.'); return; }
+    const target = String(values[i]);
+    if (tube.current === target) return;
+
+    // 该管的锁定时刻 = firstLock + 累加 gap
+    let lockAt = TIMING.firstLock;
+    for (let k = 0; k < i; k++) lockAt += TIMING.lockGap.min + Math.random() * (TIMING.lockGap.max - TIMING.lockGap.min);
+
+    const stepMs = TIMING.stepMs.min + Math.random() * (TIMING.stepMs.max - TIMING.stepMs.min);
+    let elapsed = 0;
+
+    const timer = setInterval(() => {
+      elapsed += stepMs;
+      if (elapsed < lockAt) {
+        light(tube, Math.floor(Math.random() * 10));
+      } else {
+        clearInterval(timer);
+        // 过亮脉冲：短暂提亮再稳定
+        light(tube, target);
+        const litUse = tube.uses.find(u => u.classList.contains('lit'));
+        if (litUse) {
+          litUse.style.filter += ' brightness(1.6)';
+          setTimeout(() => { litUse.style.filter = litUse.style.filter.replace(' brightness(1.6)', ''); }, TIMING.pulseMs);
+        }
+      }
+    }, stepMs);
+  });
+}
+
+/* ============================================================
+   格式化：X.XXXXXX（7 位数字，索引 1 为小数点管）
+   ============================================================ */
+function setValue(num) {
+  const str = Number(num).toFixed(6);
+  const chars = str.replace('.', '').split('');
+  const values = [chars[0], '.', ...chars.slice(1)];
+  rollTo(values);
+  document.getElementById('lineLabel').textContent =
+    Math.abs(num - 1.048596) < 1e-7 ? 'Steins Gate' : (num >= 1 ? 'α/γ' : 'β');
+  document.getElementById('btnSteins').classList.toggle('active', Math.abs(num - 1.048596) < 1e-7);
+}
+
+/* ============================================================
+   模式控制
+   ============================================================ */
+let clockTimer = null;
+const btnClock = document.getElementById('btnClock');
+const modeLabel = document.getElementById('modeLabel');
+
+function startClock() {
+  btnClock.classList.add('active'); modeLabel.textContent = 'CLOCK';
+  const tick = () => {
+    const d = new Date(); const p = n => String(n).padStart(2, '0');
+    rollTo([p(d.getHours())[0], '.', p(d.getHours())[1], p(d.getMinutes())[0], p(d.getMinutes())[1], p(d.getSeconds())[0], p(d.getSeconds())[1], '0']);
+  };
+  tick(); clockTimer = setInterval(tick, 1000);
+}
+function stopClock() {
+  btnClock.classList.remove('active'); modeLabel.textContent = 'METER';
+  clearInterval(clockTimer); clockTimer = null;
+}
+
+document.getElementById('btnRandom').onclick = () => { stopClock(); setValue(Math.random() * 2); };
+document.getElementById('btnSteins').onclick = () => { stopClock(); setValue(1.048596); };
+btnClock.onclick = () => clockTimer ? (stopClock(), setValue(1.048596)) : startClock();
+
+/* 初始值 */
+setValue(1.048596);
+</script>
+</body>
+</html>

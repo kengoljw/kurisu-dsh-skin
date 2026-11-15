@@ -1,0 +1,48 @@
+{
+  "name": "dsh-skin-kurisu",
+  "version": "1.12.7",
+  "description": "Makise Kurisu (Amadeus) skin for DeepSeek Harness — night-blue translucent surfaces, tie-crimson accent, CRT-teal business accent, and four switchable Kurisu wallpapers picked from the local wallpaper library. 牧濑红莉栖主题 DSH 皮肤。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "assets",
+    "cordis.patch.yml",
+    "README.md",
+    "install.ps1",
+    "uninstall.ps1",
+    "assets/nixie-one-OFL.txt",
+    "build.ps1",
+    "build-info.json",
+    "src"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "theme",
+    "skin",
+    "kurisu",
+    "makise-kurisu",
+    "steins-gate",
+    "wallpaper"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-theme"
+      ]
+    }
+  }
+}

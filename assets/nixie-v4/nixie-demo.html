@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divergence Meter — 辉光管数字组件 Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nixie+One&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --glow-core: #ffe9c4;
+    --glow-main: #ffa028;
+    --glow-halo: #ff7a00;
+    --off-cathode: rgba(70, 42, 16, .55);
+    --bg: #0b0e12;
+    --teal: #41c7b9;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 42px;
+    background:
+      radial-gradient(1200px 600px at 50% 30%, #141a22 0%, var(--bg) 60%),
+      var(--bg);
+    font-family: "Share Tech Mono", "Noto Sans SC", monospace;
+    overflow: hidden;
+  }
+
+  /* CRT 扫描线 + 暗角，营造 lab 氛围 */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
+    pointer-events: none;
+    z-index: 10;
+  }
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%);
+    pointer-events: none;
+    z-index: 11;
+  }
+
+  /* ====== 底座面板 ====== */
+  .meter {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    padding: 34px 40px 26px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #2a323d 0%, #1c222b 55%, #12161c 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.09),
+      inset 0 -2px 6px rgba(0,0,0,.6),
+      0 24px 60px rgba(0,0,0,.7),
+      0 0 90px rgba(255,122,0,.06);
+    position: relative;
+  }
+  /* 面板上的螺丝 */
+  .meter::before, .meter::after {
+    content: "";
+    position: absolute;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #4a545f, #14181d 70%);
+    box-shadow: inset 0 -1px 1px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.06);
+    top: 10px;
+  }
+  .meter::before { left: 12px; }
+  .meter::after  { right: 12px; }
+
+  /* ====== 单支辉光管 ====== */
+  .tube {
+    position: relative;
+    width: 62px;
+    height: 128px;
+    display: flex;
+    justify-content: center;
+  }
+  /* 玻璃管 */
+  .tube .glass {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 104px;
+    border-radius: 22px / 26px;
+    background:
+      linear-gradient(100deg,
+        rgba(255,255,255,.10) 0%,
+        rgba(255,255,255,.02) 18%,
+        transparent 40%,
+        transparent 70%,
+        rgba(255,160,60,.05) 100%);
+    box-shadow:
+      inset 0 0 14px rgba(0,0,0,.55),
+      inset 2px 0 4px rgba(255,255,255,.06),
+      inset -3px 0 8px rgba(255,122,0,.10),
+      0 0 26px rgba(255,122,0,.05);
+    border: 1px solid rgba(255,255,255,.07);
+    overflow: hidden;
+  }
+  /* 玻璃顶部高光 */
+  .tube .glass::before {
+    content: "";
+    position: absolute;
+    top: 3px; left: 12%;
+    width: 30%; height: 12px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,.22), transparent);
+    filter: blur(1px);
+  }
+  /* 管脚底座 */
+  .tube .socket {
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 54px; height: 26px;
+    border-radius: 6px;
+    background: linear-gradient(180deg, #39424d, #1a1f26 70%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.12),
+      0 3px 6px rgba(0,0,0,.6);
+  }
+
+  /* ====== 数字：10 层阴极叠放 ====== */
+  .digits {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 104px;
+    display: grid;
+    place-items: center;
+  }
+  .digits span {
+    grid-area: 1 / 1;
+    font-family: "Nixie One", monospace;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--off-cathode);
+    -webkit-text-stroke: .5px rgba(70,42,16,.35);
+    user-select: none;
+    transition: color .12s;
+    transform: translateY(2px);
+  }
+  .digits span.lit {
+    color: var(--glow-core);
+    -webkit-text-stroke: 0;
+    text-shadow:
+      0 0 2px  #ffd28f,
+      0 0 8px  var(--glow-main),
+      0 0 18px var(--glow-halo),
+      0 0 44px rgba(255,122,0,.6);
+    animation: flicker 7s infinite;
+  }
+  /* 数字越小（阴极层越深）略微缩小，模拟纵深 */
+  .digits span:nth-child(1)  { transform: translateY(2px) scale(1.00); }
+  .digits span:nth-child(2)  { transform: translateY(2px) scale(.995); }
+  .digits span:nth-child(3)  { transform: translateY(2px) scale(.99); }
+  .digits span:nth-child(4)  { transform: translateY(2px) scale(.985); }
+  .digits span:nth-child(5)  { transform: translateY(2px) scale(.98); }
+  .digits span:nth-child(6)  { transform: translateY(2px) scale(.975); }
+  .digits span:nth-child(7)  { transform: translateY(2px) scale(.97); }
+  .digits span:nth-child(8)  { transform: translateY(2px) scale(.965); }
+  .digits span:nth-child(9)  { transform: translateY(2px) scale(.96); }
+  .digits span:nth-child(10) { transform: translateY(2px) scale(.955); }
+
+  /* 偶发闪烁 */
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    91% { opacity: 1; }
+    92% { opacity: .78; }
+    93% { opacity: 1; }
+    95% { opacity: .88; }
+    96% { opacity: 1; }
+  }
+  /* 每只管闪烁相位错开（JS 里随机 delay） */
+
+  /* ====== 小数点管 ====== */
+  .tube.dot .digits span {
+    font-family: "Share Tech Mono", monospace;
+    font-size: 56px;
+    -webkit-text-stroke: 0;
+    transform: translateY(18px);
+  }
+
+  /* ====== 标签与控件 ====== */
+  .label {
+    color: rgba(255,255,255,.35);
+    letter-spacing: .35em;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+  .label b { color: var(--teal); font-weight: normal; }
+
+  .controls { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  button {
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: .12em;
+    color: var(--teal);
+    background: rgba(65,199,185,.06);
+    border: 1px solid rgba(65,199,185,.35);
+    border-radius: 4px;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  button:hover {
+    background: rgba(65,199,185,.15);
+    box-shadow: 0 0 14px rgba(65,199,185,.25);
+  }
+  button.active {
+    color: #0b0e12;
+    background: var(--teal);
+  }
+</style>
+</head>
+<body>
+
+<div class="label">DIVERGENCE <b id="modeLabel">METER</b> · WORLD LINE <b id="lineLabel">β</b></div>
+
+<div class="meter" id="meter"></div>
+
+<div class="controls">
+  <button id="btnRandom">随机世界线</button>
+  <button id="btnSteins">1.048596 — Steins Gate</button>
+  <button id="btnClock">时钟模式</button>
+</div>
+
+<script>
+  const meter = document.getElementById('meter');
+  const TUBE_COUNT = 8;          // 7 位数字 + 1 个小数点管
+  const DOT_INDEX  = 1;          // 第 2 支是小数点管
+
+  // 建管
+  const tubes = [];
+  for (let i = 0; i < TUBE_COUNT; i++) {
+    const tube = document.createElement('div');
+    tube.className = 'tube' + (i === DOT_INDEX ? ' dot' : '');
+    tube.innerHTML = `<div class="glass"></div><div class="socket"></div><div class="digits"></div>`;
+    const digits = tube.querySelector('.digits');
+    const chars = i === DOT_INDEX ? ['.'] : '0123456789'.split('');
+    chars.forEach(c => {
+      const s = document.createElement('span');
+      s.textContent = c;
+      digits.appendChild(s);
+    });
+    meter.appendChild(tube);
+    tubes.push({ el: tube, spans: [...digits.children], current: null });
+  }
+
+  // 点亮某管某数字
+  function light(tube, digit) {
+    tube.spans.forEach(s => s.classList.toggle('lit', s.textContent === String(digit)));
+    tube.current = String(digit);
+  }
+
+  // 切换动画：快速轮闪 → 逐位停格（模仿阴极切换）
+  function rollTo(values) {
+    tubes.forEach((tube, i) => {
+      if (i === DOT_INDEX) { light(tube, '.'); return; }
+      const target = String(values[i]);
+      if (tube.current === target) return;
+      const spins = 8 + Math.floor(Math.random() * 6);   // 轮闪次数
+      const stepMs = 55;
+      let n = 0;
+      const timer = setInterval(() => {
+        light(tube, Math.floor(Math.random() * 10));
+        if (++n >= spins + i * 2) {                      // 左侧先停，依次向右
+          clearInterval(timer);
+          light(tube, target);
+        }
+      }, stepMs);
+    });
+  }
+
+  // 格式化：X.XXXXXX（7 位数字，索引 1 为小数点管）
+  function setValue(num) {
+    const str = Number(num).toFixed(6);                  // "1.048596"
+    const chars = str.replace('.', '').split('');        // 7 位
+    const values = [chars[0], '.', ...chars.slice(1)];
+    rollTo(values);
+    document.getElementById('lineLabel').textContent =
+      num >= 1 ? (Math.abs(num - 1.048596) < 1e-7 ? 'Steins Gate' : 'α/γ') : 'β';
+  }
+
+  // 每只管随机错开闪烁相位
+  tubes.forEach(t => t.spans.forEach(s => {
+    s.style.animationDelay = (Math.random() * 7).toFixed(2) + 's';
+  }));
+
+  // ====== 模式控制 ======
+  let clockTimer = null;
+  const btnClock = document.getElementById('btnClock');
+  const modeLabel = document.getElementById('modeLabel');
+
+  function startClock() {
+    btnClock.classList.add('active');
+    modeLabel.textContent = 'CLOCK';
+    const tick = () => {
+      const d = new Date();
+      const p = n => String(n).padStart(2, '0');
+      rollTo([p(d.getHours())[0], '.', p(d.getHours())[1],
+              p(d.getMinutes())[0], p(d.getMinutes())[1],
+              p(d.getSeconds())[0], p(d.getSeconds())[1], '0']);
+    };
+    tick();
+    clockTimer = setInterval(tick, 1000);
+  }
+  function stopClock() {
+    btnClock.classList.remove('active');
+    modeLabel.textContent = 'METER';
+    clearInterval(clockTimer);
+    clockTimer = null;
+  }
+
+  document.getElementById('btnRandom').onclick = () => {
+    stopClock();
+    setValue((Math.random() * 2).toFixed(6));
+  };
+  document.getElementById('btnSteins').onclick = () => {
+    stopClock();
+    setValue(1.048596);
+  };
+  btnClock.onclick = () => clockTimer ? stopClock() || setValue(1.048596) : startClock();
+
+  // 初始值：Steins Gate 世界线
+  setValue(1.048596);
+</script>
+</body>
+</html>

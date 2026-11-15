@@ -1,0 +1,23 @@
+{
+    "builtAt":  "2026-11-14T23:36:19.2058819+08:00",
+    "version":  "1.12.7",
+    "bundleBytes":  1142447,
+    "assets":  {
+                   "wall-dusk.webp":  {
+                                          "bytes":  91880,
+                                          "sha256":  "2E7244FB703DEEBD08167D999397A0F47829B0BDCC47FEFA189FE25910A15903"
+                                      },
+                   "wall-library.webp":  {
+                                             "bytes":  166342,
+                                             "sha256":  "38E32325166D8145D60CEB3B3EEA222512080653A43A70F039C47331F091574E"
+                                         },
+                   "wall-day.webp":  {
+                                         "bytes":  65898,
+                                         "sha256":  "51DA86FAE12417A39758BA4781984EBB6A038A30D4C7593403D73B98430CBE81"
+                                     },
+                   "wall-night.webp":  {
+                                           "bytes":  46180,
+                                           "sha256":  "9EAB47408CBC51FD66463EAC71C98BD2A8BFAA138EE42FB8B2400DF5574CA024"
+                                       }
+               }
+}

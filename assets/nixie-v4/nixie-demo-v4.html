@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divergence Meter v4 — 极致写实辉光管</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nx-core: #FFD7A0; --nx-glow: #FF6A00; --nx-halo: #FF3D00; --nx-wire: #5E5A52; --nx-c-body: #121310;
+    --lab: #0E0F0D; --lab-ink: #D6D9CF;
+    --nx-gr: .16; --nx-span: min(1100px, 92vw, calc(100vw - 40px));
+    --nx-tw: calc(var(--nx-span) / (8 + 7 * var(--nx-gr)));
+    --nx-dome: calc(var(--nx-tw) * .34);
+    --nx-sw-sheath: 2.9; --nx-sw-core: 1.15; --nx-sw-wire: 1;
+    --nx-stack-alpha: .3; --nx-front-alpha: .9; --nx-mesh-alpha: .5;
+    --nx-g1: calc(var(--nx-tw) * .010); --nx-g2: calc(var(--nx-tw) * .040); --nx-g3: calc(var(--nx-tw) * .110);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px;
+    font-family: "Share Tech Mono", "Noto Sans SC", monospace; color: var(--lab-ink);
+    background:
+      linear-gradient(to bottom, rgb(236 240 243 / .05), rgb(236 240 243 / 0) 26%),
+      radial-gradient(ellipse 1200px 600px at 50% 25%, #141820 0%, var(--lab) 55%),
+      var(--lab);
+    overflow: hidden;
+  }
+  .crt { position: fixed; inset: 0; pointer-events: none; z-index: 100;
+    background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / .5) 100%); }
+  .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+
+  /* ---- 底板 ---- */
+  .nx {
+    display: flex; align-items: flex-end; gap: calc(var(--nx-tw) * var(--nx-gr));
+    width: max-content; max-width: 100%; position: relative; line-height: 0;
+    -webkit-user-select: none; user-select: none;
+    padding: 30px 36px 22px; border-radius: 14px;
+    background: linear-gradient(180deg, #1b2027 0%, #12161c 60%, #0b0e12 100%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .09), inset 0 -3px 10px rgb(0 0 0 / .7),
+      0 28px 70px rgb(0 0 0 / .8), 0 0 120px rgb(255 106 0 / .05);
+    cursor: pointer; isolation: isolate;
+  }
+  .nx::before, .nx::after {
+    content: ""; position: absolute; top: 10px; width: 10px; height: 10px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #566372, #0f1318 75%);
+    box-shadow: inset 0 -1px 2px rgb(0 0 0 / .9), 0 1px 0 rgb(255 255 255 / .07);
+  }
+  .nx::before { left: 14px; } .nx::after { right: 14px; }
+
+  /* ---- 单管：五层结构 ---- */
+  .nx__tube {
+    position: relative; flex: none; width: var(--nx-tw); aspect-ratio: 10 / 22;
+    isolation: isolate;
+    border-radius: 50% 50% calc(var(--nx-tw) * .07) calc(var(--nx-tw) * .07) /
+                   var(--nx-dome) var(--nx-dome) calc(var(--nx-tw) * .07) calc(var(--nx-tw) * .07);
+    background:
+      linear-gradient(to top, #0a0a09 0%, #171814 5.5%, #22221e 7.4%, #3a3933 8.1%, #121311 8.7%, rgb(18 19 16 / 0) 9.4%),
+      linear-gradient(90deg, rgb(0 0 0 / .55) 0%, rgb(0 0 0 / .18) 9%, rgb(255 255 255 / .035) 26%,
+        rgb(255 255 255 / .012) 52%, rgb(0 0 0 / .14) 78%, rgb(0 0 0 / .5) 100%),
+      radial-gradient(46% 11% at 50% 3%, rgb(58 55 49 / .55), rgb(58 55 49 / 0) 100%),
+      var(--nx-c-body);
+    box-shadow: 0 10px 16px rgb(0 0 0 / .55);
+  }
+  .nx__tube:not(.is-off) { box-shadow: 0 10px 16px rgb(0 0 0 / .55), 0 0 34px rgb(255 90 10 / .18), 0 0 90px rgb(255 80 0 / .10); }
+
+  .nx__stack, .nx__lit, .nx__front {
+    position: absolute; left: -4%; width: 108%; top: 7.4%; height: auto; aspect-ratio: 60 / 100;
+    overflow: visible; pointer-events: none;
+  }
+  .nx__stack { z-index: 1; color: var(--nx-wire); stroke-width: var(--nx-sw-wire); opacity: var(--nx-stack-alpha);
+    background: radial-gradient(60% 46% at 50% 50%, rgb(255 92 16 / .55), rgb(255 70 10 / .22) 50%, rgb(255 61 0 / .06) 75%, rgb(255 61 0 / 0) 100%); }
+  .nx__halo {
+    position: absolute; inset: -16% -28%; z-index: 0; pointer-events: none;
+    background: radial-gradient(50% 50% at 50% 50%, rgb(255 120 30 / var(--nx-halo-alpha, .30)), rgb(255 80 0 / .12) 45%, rgb(255 61 0 / 0) 75%);
+    filter: blur(calc(var(--nx-tw) * .05)); mix-blend-mode: screen;
+    opacity: 0; transition: opacity .3s;
+  }
+  .nx__tube:not(.is-off) .nx__halo { opacity: 1; }
+  .nx__lit { z-index: 2;
+    filter: drop-shadow(0 0 var(--nx-g1) rgb(255 120 30 / .95))
+           drop-shadow(0 0 var(--nx-g2) rgb(255 106 0 / .6))
+           drop-shadow(0 0 var(--nx-g3) rgb(255 61 0 / .32))
+           drop-shadow(0 0 calc(var(--nx-tw) * .22) rgb(255 61 0 / .18))
+           drop-shadow(0 0 calc(var(--nx-tw) * .40) rgb(255 50 0 / .10)); }
+  .nx__sheath { color: var(--nx-glow); stroke-width: var(--nx-sw-sheath); }
+  .nx__core   { color: var(--nx-core); stroke-width: var(--nx-sw-core); }
+  .nx__front  { z-index: 3; color: #6a4630; stroke-width: var(--nx-sw-wire); opacity: var(--nx-front-alpha); mix-blend-mode: multiply; }
+  .is-hidden { visibility: hidden; }
+
+  /* z4 蜂窝阳极网 */
+  .nx__tube::before {
+    content: ""; position: absolute; z-index: 4; left: 5%; right: 5%; top: 16.5%; bottom: 20.5%;
+    pointer-events: none; opacity: var(--nx-mesh-alpha); mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6.928' height='12' viewBox='0 0 6.928 12'%3E%3Cpath d='M3.464 0L6.928 2L6.928 6L3.464 8L0 6L0 2Z M3.464 8L3.464 12' fill='none' stroke='%232a2019' stroke-width='.5'/%3E%3C/svg%3E");
+    background-size: calc(var(--nx-tw) * .082) auto; background-position: center;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%, #000 78%, transparent 100%),
+                        linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+    -webkit-mask-composite: source-in; mask-image: inherit; mask-composite: intersect;
+  }
+
+  /* z5 前玻璃：掠射高光 + 穹顶受光 + 边缘 */
+  .nx__tube::after {
+    content: ""; position: absolute; z-index: 5; inset: 0 0 9.4% 0; pointer-events: none;
+    border-radius: 50% 50% 0 0 / var(--nx-dome) var(--nx-dome) 0 0;
+    background:
+      linear-gradient(90deg, rgb(222 230 236 / 0) 12%, rgb(222 230 236 / .17) 16.5%, rgb(222 230 236 / .05) 20%, rgb(222 230 236 / 0) 25%),
+      linear-gradient(90deg, rgb(222 230 236 / 0) 79%, rgb(222 230 236 / .055) 85%, rgb(222 230 236 / 0) 90%),
+      radial-gradient(26% 6% at 34% 5%, rgb(236 240 243 / .30), rgb(236 240 243 / 0) 100%);
+    box-shadow: inset 0 0 0 1px rgb(216 224 230 / .06), inset 1px 0 0 rgb(216 224 230 / .08), inset 0 1px 1px rgb(216 224 230 / .14);
+  }
+
+  /* 状态 */
+  .nx__tube.is-off .nx__lit { visibility: hidden; }
+  .nx__tube.is-off .nx__stack { background: none; }
+  .nx__tube.is-dim .nx__lit { opacity: .38 !important; }
+  .nx__tube[data-char="blank"] .nx__stack { background: none; }
+  .nx__tube[data-char="dot"] .nx__stack, .nx__tube[data-char="dot"] .nx__front { display: none; }
+  .nx__tube.is-pulse .nx__lit {
+    filter: drop-shadow(0 0 var(--nx-g1) rgb(255 120 30 / .95))
+           drop-shadow(0 0 var(--nx-g2) rgb(255 106 0 / .6))
+           drop-shadow(0 0 var(--nx-g3) rgb(255 61 0 / .32))
+           drop-shadow(0 0 calc(var(--nx-tw) * .22) rgb(255 61 0 / .18))
+           drop-shadow(0 0 calc(var(--nx-tw) * .40) rgb(255 50 0 / .10))
+           brightness(2.1) saturate(1.1);
+  }
+
+  /* 电流声 */
+  @media (prefers-reduced-motion: no-preference) {
+    .nx__lit { animation: nx-hum var(--nx-hum, 9.7s) linear var(--nx-hum-delay, 0s) infinite; }
+    .nx.is-fail .nx__lit { animation-name: nx-hum-unstable; }
+  }
+  .nx__tube:nth-child(1) { --nx-hum: 9.7s;  --nx-hum-delay: -1.3s; }
+  .nx__tube:nth-child(2) { --nx-hum: 12.1s; --nx-hum-delay: -7.9s; }
+  .nx__tube:nth-child(3) { --nx-hum: 8.3s;  --nx-hum-delay: -4.2s; }
+  .nx__tube:nth-child(4) { --nx-hum: 10.9s; --nx-hum-delay: -0.6s; }
+  .nx__tube:nth-child(5) { --nx-hum: 7.6s;  --nx-hum-delay: -5.5s; }
+  .nx__tube:nth-child(6) { --nx-hum: 11.4s; --nx-hum-delay: -2.8s; }
+  .nx__tube:nth-child(7) { --nx-hum: 9.1s;  --nx-hum-delay: -6.4s; }
+  .nx__tube:nth-child(8) { --nx-hum: 8.8s;  --nx-hum-delay: -3.7s; }
+
+  @keyframes nx-hum {
+    0%, 100% { opacity: 1; } 11% { opacity: .965; } 12.5% { opacity: 1; }
+    38% { opacity: .975; } 40% { opacity: 1; } 71% { opacity: 1; }
+    71.3% { opacity: .62; } 71.7% { opacity: 1; } 88% { opacity: .97; } 89% { opacity: 1; }
+  }
+  @keyframes nx-hum-unstable {
+    0%, 100% { opacity: 1; } 17% { opacity: 1; } 17.4% { opacity: .3; } 17.9% { opacity: .95; }
+    44% { opacity: .9; } 46% { opacity: 1; } 63% { opacity: 1; } 63.3% { opacity: .5; } 63.8% { opacity: 1; } 90% { opacity: .92; }
+  }
+
+  @media (max-width: 700px) {
+    :root { --nx-sw-sheath: 3.8; --nx-sw-core: 1.6; --nx-sw-wire: 1.5; }
+    .nx__front, .nx__tube::before { display: none; }
+  }
+
+  .label { letter-spacing: .4em; font-size: 12px; color: rgb(214 217 207 / .35); text-transform: uppercase; }
+  .label b { color: var(--nx-glow); font-weight: normal; }
+  .controls { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  button {
+    font-family: inherit; font-size: 13px; letter-spacing: .1em;
+    color: #9fb3a8; background: rgb(214 217 207 / .04);
+    border: 1px solid rgb(214 217 207 / .22);
+    border-radius: 4px; padding: 10px 20px; cursor: pointer; transition: all .15s;
+  }
+  button:hover { background: rgb(214 217 207 / .10); color: var(--lab-ink); }
+  button.active { color: var(--lab); background: var(--lab-ink); border-color: var(--lab-ink); }
+  .hint { font-size: 11px; color: rgb(214 217 207 / .25); letter-spacing: .2em; }
+</style>
+</head>
+<body>
+<div class="crt"></div>
+<div class="sr-only" aria-live="polite" id="live"></div>
+
+<div class="label">DIVERGENCE <b>METER</b> · WORLD LINE <b id="lineLabel">Steins Gate</b></div>
+<div class="nx" id="meter" role="img" aria-label="Divergence meter" title="点击重新读数"></div>
+<div class="controls">
+  <button id="btnRandom">随机世界线</button>
+  <button id="btnSteins" class="active">1.048596 — Steins Gate</button>
+  <button id="btnClock">时钟模式</button>
+  <button id="btnIgnite">点火 Ignite</button>
+  <button id="btnFail">故障 Fail</button>
+</div>
+<div class="hint">CLICK METER TO RE-READ · 每次读数左→右依次锁定</div>
+
+<!-- 精灵表 -->
+<div class="nx-sprites" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="nx-0" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.952) translate(-30 -50)" data-layer="8"><path d="M11 36 A19 19 0 0 1 49 36 L49 64 A19 19 0 0 1 11 64 Z"/></g></symbol>
+  <symbol id="nx-1" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g data-layer="0"><path d="M19.5 28.5 L30 17 L30 83"/></g></symbol>
+  <symbol id="nx-2" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.982) translate(-30 -50)" data-layer="3"><path d="M11 36 A19 19 0 1 1 43.66 49.2 L11 83 L49 83"/></g></symbol>
+  <symbol id="nx-3" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.970) translate(-30 -50)" data-layer="5"><path d="M16.84 26.21 A14 14 0 1 1 30 45 A19 19 0 1 1 12.15 70.5"/></g></symbol>
+  <symbol id="nx-4" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.988) translate(-30 -50)" data-layer="2"><path d="M39 83 L39 17 L11 63 L49 63"/></g></symbol>
+  <symbol id="nx-5" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.976) translate(-30 -50)" data-layer="4"><path d="M47 17 L16 17 L14.44 53.1 A19 19 0 1 1 13.55 73.5"/></g></symbol>
+  <symbol id="nx-6" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.958) translate(-30 -50)" data-layer="7"><path d="M43.86 17.18 A36 47 0 0 0 11 64 A19 19 0 1 0 49 64 A19 19 0 1 0 11 64"/></g></symbol>
+  <symbol id="nx-7" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.994) translate(-30 -50)" data-layer="1"><path d="M11 17 L49 17 Q33 42 28 83"/></g></symbol>
+  <symbol id="nx-8" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.946) translate(-30 -50)" data-layer="9"><path d="M15 31.5 A15 14.5 0 0 1 45 31.5 A15 14.5 0 0 1 15 31.5 Z"/><path d="M11.5 64.5 A18.5 18.5 0 0 1 48.5 64.5 A18.5 18.5 0 0 1 11.5 64.5 Z"/></g></symbol>
+  <symbol id="nx-9" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g transform="translate(30 50) scale(0.964) translate(-30 -50)" data-layer="6"><path d="M16.14 82.82 A36 47 0 0 0 49 36 A19 19 0 1 0 11 36 A19 19 0 1 0 49 36"/></g></symbol>
+  <symbol id="nx-dot" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g data-layer="-1"><circle cx="30" cy="80" r="2" fill="currentColor"/></g></symbol>
+  <symbol id="nx-q" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g data-layer="-1"><path d="M15.9 26.87 A15 15 0 1 1 41.71 41.38 L30 56 L30 63"/><circle cx="30" cy="80" r="2" fill="currentColor"/></g></symbol>
+  <symbol id="nx-dash" viewBox="0 0 60 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><g data-layer="-1"><path d="M18 50 L42 50"/></g></symbol>
+  <symbol id="nx-blank" viewBox="0 0 60 100"></symbol>
+</svg>
+</div>
+
+<script>
+const LAYER = { '1':0,'7':1,'4':2,'2':3,'5':4,'3':5,'9':6,'6':7,'0':8,'8':9 };
+const ORDER = ['1','7','4','2','5','3','9','6','0','8'];
+const DIGITS = '0123456789';
+const SYMBOL_MAP = { '0':'nx-0','1':'nx-1','2':'nx-2','3':'nx-3','4':'nx-4','5':'nx-5','6':'nx-6','7':'nx-7','8':'nx-8','9':'nx-9','.':'nx-dot','?':'nx-q','-':'nx-dash',' ':'nx-blank' };
+const DOT_INDEX = 1;
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const meterEl = document.getElementById('meter');
+const liveEl  = document.getElementById('live');
+const _timers = [];   // 所有 setTimeout/setInterval id 都在这里
+let currentValue = '1.048596';
+let clockTimer = null;
+
+function clearAll() {
+  _timers.forEach(id => typeof id === 'number' ? clearTimeout(id) : clearInterval(id));
+  _timers.length = 0;
+}
+
+/* ---- 建管 ---- */
+const tubes = [];
+for (let i = 0; i < 8; i++) {
+  const tube = document.createElement('div');
+  tube.className = 'nx__tube';
+  let stack = '', front = '';
+  ORDER.forEach(c => {
+    stack += `<use href="#nx-${c}" data-ch="${c}"/>`;
+    front  += `<use href="#nx-${c}" data-ch="${c}"/>`;
+  });
+  tube.innerHTML =
+    `<div class="nx__halo"></div>` +
+    `<svg class="nx__stack" viewBox="0 0 60 100">${stack}</svg>` +
+    `<svg class="nx__lit" viewBox="0 0 60 100"><use class="nx__sheath" href="#nx-blank"/><use class="nx__core" href="#nx-blank"/></svg>` +
+    `<svg class="nx__front" viewBox="0 0 60 100">${front}</svg>`;
+  meterEl.appendChild(tube);
+  tubes.push(tube);
+}
+
+function setTube(tube, char) {
+  tube.dataset.char = char;
+  const L = char in LAYER ? LAYER[char] : -1;
+  tube.classList.toggle('is-off', char === ' ');
+  tube.querySelectorAll('.nx__stack use').forEach(u => u.classList.toggle('is-hidden', LAYER[u.dataset.ch] <= L));
+  tube.querySelectorAll('.nx__front use').forEach(u => u.classList.toggle('is-hidden', LAYER[u.dataset.ch] >= L));
+  tube.querySelectorAll('.nx__lit use').forEach(u => u.setAttribute('href', '#' + SYMBOL_MAP[char]));
+}
+
+function normalize(value) {
+  const v = String(value ?? '');
+  let first, right;
+  if (v.includes('.')) { const i = v.indexOf('.'); first = v.slice(0, i).slice(-1) || ' '; right = v.slice(i + 1); }
+  else { first = v.slice(0, 1) || ' '; right = v.slice(1); }
+  return [first, '.', ...((right + '      ').slice(0, 6))].map(c => c in SYMBOL_MAP ? c : ' ');
+}
+function announce(v) { liveEl.textContent = `World line reading ${v.replace(/ /g, '')}`; }
+
+/* ---- 滚动 ---- */
+function shiftTo(value, { ignite } = {}) {
+  clearAll();
+  currentValue = value;
+  const chars = normalize(value);
+  if (RM) { chars.forEach((c, i) => setTube(tubes[i], c)); announce(value); return; }
+  let acc = 0;
+  tubes.forEach((tube, i) => {
+    const target = chars[i];
+    if (i === DOT_INDEX) {
+      const t = setTimeout(() => setTube(tube, '.'), 30);
+      _timers.push(t); return;
+    }
+    const lockAt = (ignite ? 560 : 340) + acc;
+    acc += 40 + Math.random() * 50;
+    const stepMs = 45 + Math.random() * 25;
+    const iv = setInterval(() => setTube(tube, DIGITS[Math.floor(Math.random() * 10)]), stepMs);
+    _timers.push(iv);
+    const t = setTimeout(() => {
+      clearInterval(iv);
+      setTube(tube, target);
+      tube.classList.add('is-pulse');
+      _timers.push(setTimeout(() => tube.classList.remove('is-pulse'), 120));
+      if (i === tubes.length - 1) announce(value);
+    }, lockAt);
+    _timers.push(t);
+  });
+}
+
+/* ---- 点火 ---- */
+function igniteValue(value) {
+  clearAll();
+  tubes.forEach(t => t.classList.add('is-off'));
+  setTimeout(() => shiftTo(value, { ignite: true }), 120);
+}
+
+/* ---- 故障 ---- */
+function fail() {
+  clearAll();
+  meterEl.classList.add('is-fail');
+  tubes.forEach((tube, i) => {
+    if (i === DOT_INDEX) { setTube(tube, '.'); return; }
+    const iv = setInterval(() => setTube(tube, Math.random() < .5 ? '?' : DIGITS[Math.floor(Math.random() * 10)]), 60);
+    _timers.push(iv);
+  });
+  _timers.push(setTimeout(() => {
+    clearAll();
+    meterEl.classList.remove('is-fail');
+    const chars = normalize('-.------');
+    chars.forEach((c, i) => setTube(tubes[i], c));
+    currentValue = '-.------';
+  }, 4000));
+}
+
+/* ---- 时钟 ---- */
+function clockChars() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return [p(d.getHours())[0], '.', p(d.getHours())[1], p(d.getMinutes())[0], p(d.getMinutes())[1], p(d.getSeconds())[0], p(d.getSeconds())[1], ' '];
+}
+function startClock() {
+  clockTimer = setInterval(() => clockChars().forEach((ch, i) => setTube(tubes[i], ch)), 1000);
+}
+function stopClock() { clearInterval(clockTimer); clockTimer = null; }
+
+/* ---- 控件 ---- */
+const btnSteins = document.getElementById('btnSteins');
+const btnClock  = document.getElementById('btnClock');
+const lineLabel = document.getElementById('lineLabel');
+function setMode(label, steinsActive) {
+  lineLabel.textContent = label;
+  btnSteins.classList.toggle('active', steinsActive);
+  btnClock.classList.toggle('active', !steinsActive);
+}
+
+document.getElementById('btnRandom').onclick = () => { stopClock(); setMode(Math.random() < .5 ? 'β' : 'α/γ', false); shiftTo((Math.random() * 2).toFixed(6)); };
+btnSteins.onclick = () => { stopClock(); setMode('Steins Gate', true); shiftTo('1.048596'); };
+btnClock.onclick = () => {
+  if (clockTimer) { stopClock(); shiftTo('1.048596'); setMode('Steins Gate', true); }
+  else { clearAll(); setMode('CLOCK', false); clockChars().forEach((ch, i) => setTube(tubes[i], ch)); startClock(); }
+};
+document.getElementById('btnIgnite').onclick = () => { stopClock(); setMode('Steins Gate', true); igniteValue('1.048596'); };
+document.getElementById('btnFail').onclick = () => { stopClock(); setMode('?', false); fail(); };
+meterEl.onclick = () => { stopClock(); shiftTo(currentValue); };
+
+/* 初始：点火进入 Steins Gate */
+igniteValue('1.048596');
+</script>
+</body>
+</html>

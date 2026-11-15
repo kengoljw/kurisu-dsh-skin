@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sg-nixie Web Component — 交接 Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  body { background: #0E0F0D; color: #D6D9CF; font-family: "Share Tech Mono", monospace; padding: 40px 20px; }
+  h2 { font-size: 14px; letter-spacing: .2em; color: #8fa89e; margin: 32px 0 12px; }
+  .panel { padding: 24px; border: 1px solid #2a2f35; border-radius: 8px; margin-bottom: 24px; background: #12161c; }
+  button { font-family: inherit; background: none; border: 1px solid #3ed9c5; color: #3ed9c5; padding: 6px 14px; margin-right: 8px; border-radius: 3px; cursor: pointer; }
+  button:hover { background: rgba(62,217,197,.12); }
+  code { background: #1a2027; padding: 2px 6px; border-radius: 3px; font-size: 12px; }
+  #log { margin-top: 16px; padding: 12px; background: #0a0d11; border: 1px solid #2a2f35; border-radius: 4px; max-height: 120px; overflow-y: auto; font-size: 12px; line-height: 1.6; color: #7a8a80; }
+</style>
+</head>
+<body>
+
+<h2>1. 基础用法（属性驱动）</h2>
+<div class="panel">
+  <sg-nixie value="1.048596"></sg-nixie>
+  <p style="margin-top:16px;font-size:12px;color:#8fa89e"><code>&lt;sg-nixie value="1.048596"&gt;&lt;/sg-nixie&gt;</code></p>
+</div>
+
+<h2>2. 时钟模式</h2>
+<div class="panel">
+  <sg-nixie mode="clock"></sg-nixie>
+  <p style="margin-top:16px;font-size:12px;color:#8fa89e"><code>&lt;sg-nixie mode="clock"&gt;&lt;/sg-nixie&gt;</code></p>
+</div>
+
+<h2>3. JS API（事件监听 + 方法调用）</h2>
+<div class="panel">
+  <sg-nixie id="api-meter" value="0.571024"></sg-nixie>
+  <div style="margin-top:16px">
+    <button onclick="document.getElementById('api-meter').ignite('1.048596')">ignite(1.048596)</button>
+    <button onclick="document.getElementById('api-meter').shiftTo((Math.random()*2).toFixed(6))">shiftTo(随机)</button>
+    <button onclick="document.getElementById('api-meter').fail()">fail()</button>
+    <button onclick="document.getElementById('api-meter').reread()">reread()</button>
+  </div>
+  <div id="log"></div>
+</div>
+
+<script src="./sg-nixie.js"></script>
+<script>
+  const m = document.getElementById('api-meter');
+  const log = document.getElementById('log');
+  ['meter:shift','meter:lock','meter:locked','meter:fail'].forEach(evt =>
+    m.addEventListener(evt, e => {
+      const line = `[${new Date().toLocaleTimeString()}] ${evt}: ${JSON.stringify(e.detail)}`;
+      log.prepend(Object.assign(document.createElement('div'), { textContent: line }));
+    })
+  );
+</script>
+</body>
+</html>

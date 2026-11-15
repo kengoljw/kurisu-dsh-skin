@@ -1,0 +1,52 @@
+/* Steins;Gate 辉光管主题 —— 设计变量（近似采样值，可按官图吸色微调） */
+:root {
+  /* 辉光 */
+  --nixie-glow-core:   #ffe9c4;  /* 灯丝亮核 */
+  --nixie-glow-main:   #ffa028;  /* 琥珀橙主色 */
+  --nixie-glow-halo:   #ff7a00;  /* 外晕 */
+  --nixie-off:         #2a1a0c;  /* 熄灭阴极残影 */
+
+  /* 背景与面板 */
+  --sg-bg:             #0b0e12;  /* 深背景（带蓝调近黑） */
+  --sg-bg-raised:      #10151b;
+  --sg-panel-1:        #1c222b;  /* 金属底座渐变起点 */
+  --sg-panel-2:        #2a323d;
+
+  /* 点缀 */
+  --sg-teal:           #41c7b9;  /* PhoneWave 终端青 */
+  --sg-teal-bright:    #35e0d0;
+  --sg-danger:         #e5484d;  /* 世界线变动警示红，极少量 */
+
+  /* 字体 */
+  --sg-font-nixie: "Nixie One", monospace;
+  --sg-font-mono:  "Share Tech Mono", "Noto Sans SC", monospace;
+  --sg-font-body:  "Noto Sans SC", sans-serif;
+}
+
+/* 点亮数字的辉光（多层 text-shadow 叠 bloom） */
+.sg-nixie-digit {
+  font-family: var(--sg-font-nixie);
+  color: var(--nixie-glow-core);
+  text-shadow:
+    0 0 2px  #ffd28f,
+    0 0 8px  var(--nixie-glow-main),
+    0 0 18px var(--nixie-glow-halo),
+    0 0 42px rgba(255, 122, 0, .55);
+}
+
+/* 熄灭位：暗色垫底，不做阴影 */
+.sg-nixie-digit--off {
+  color: var(--nixie-off);
+  text-shadow: none;
+}
+
+/* 偶发闪烁：模仿灯丝不稳 */
+@keyframes sg-nixie-flicker {
+  0%, 100% { opacity: 1; }
+  92%      { opacity: 1; }
+  93%      { opacity: .82; }
+  94%      { opacity: 1; }
+  96%      { opacity: .9; }
+  97%      { opacity: 1; }
+}
+.sg-nixie-digit { animation: sg-nixie-flicker 7s infinite; }

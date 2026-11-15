@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divergence Meter v2 — 辉光管数字组件（修正版）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nixie+One&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --glow-core: #fff3d6;      /* 灯丝亮核：更亮更暖 */
+    --glow-main: #ffb340;      /* 主辉光橙 */
+    --glow-halo: #ff8800;      /* 外晕深橙 */
+    --glow-reach: #ff5500;     /* 远距离辉光红橙 */
+    --off-cathode: rgba(60, 35, 12, .45);
+    --bg: #0a0d11;
+    --panel-1: #1f2833;
+    --panel-2: #141a21;
+    --teal: #3ed9c5;
+    --teal-dim: rgba(62,217,197,.35);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    background:
+      radial-gradient(ellipse 1200px 600px at 50% 25%, #121820 0%, var(--bg) 55%),
+      var(--bg);
+    font-family: "Share Tech Mono", "Noto Sans SC", monospace;
+    color: #d0d8e0;
+  }
+
+  /* 全屏 CRT 扫描线 + 暗角（不干扰交互） */
+  .crt {
+    position: fixed; inset: 0; pointer-events: none; z-index: 100;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 3px),
+      radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.65) 100%);
+    mask-image: radial-gradient(ellipse at center, black 60%, transparent 100%);
+  }
+
+  /* ====== 底座面板 ====== */
+  .meter {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+    padding: 38px 44px 30px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, var(--panel-1) 0%, var(--panel-2) 70%, #0d1116 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.10),
+      inset 0 -3px 10px rgba(0,0,0,.7),
+      0 28px 70px rgba(0,0,0,.8),
+      0 0 0 1px rgba(255,255,255,.03),
+      /* 底部环境辉光投射 */
+      0 40px 80px -20px rgba(255,179,64,.07);
+  }
+  /* 面板螺丝 */
+  .meter::before, .meter::after {
+    content: "";
+    position: absolute;
+    top: 12px; width: 10px; height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #566372, #0f1318 75%);
+    box-shadow: inset 0 -1px 2px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.07);
+  }
+  .meter::before { left: 14px; }
+  .meter::after  { right: 14px; }
+
+  /* ====== 单支辉光管 ====== */
+  .tube {
+    position: relative;
+    width: 68px;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── 关键修正：数字层在最底，玻璃管在中间，辉光层在最外 ── */
+  /* 1️⃣ 数字层（最底层） */
+  .digits {
+    position: relative;
+    z-index: 1;
+    height: 112px;
+    display: grid;
+    place-items: center;
+    width: 48px;
+  }
+  .digits span {
+    grid-area: 1 / 1;
+    font-family: "Nixie One", monospace;
+    font-size: 70px;
+    line-height: 1;
+    color: var(--off-cathode);
+    -webkit-text-stroke: .6px rgba(60,35,12,.4);
+    user-select: none;
+    transform: translateY(3px);
+  }
+  .digits span.lit {
+    color: var(--glow-core);
+    -webkit-text-stroke: 0;
+    /* 辉光完全由 text-shadow 承载，不受任何父级 overflow 限制 */
+    text-shadow:
+      0 0 1px  #fff8e8,
+      0 0 3px  var(--glow-core),
+      0 0 7px  var(--glow-main),
+      0 0 16px var(--glow-halo),
+      0 0 36px var(--glow-reach),
+      0 0 70px rgba(255,85,0,.45);
+    animation: flicker 8s infinite;
+  }
+  /* 纵深缩放：模拟阴极层叠深度 */
+  .digits span:nth-child(1)  { transform: translateY(3px) scale(1.000); }
+  .digits span:nth-child(2)  { transform: translateY(3px) scale(.994); }
+  .digits span:nth-child(3)  { transform: translateY(3px) scale(.988); }
+  .digits span:nth-child(4)  { transform: translateY(3px) scale(.982); }
+  .digits span:nth-child(5)  { transform: translateY(3px) scale(.976); }
+  .digits span:nth-child(6)  { transform: translateY(3px) scale(.970); }
+  .digits span:nth-child(7)  { transform: translateY(3px) scale(.964); }
+  .digits span:nth-child(8)  { transform: translateY(3px) scale(.958); }
+  .digits span:nth-child(9)  { transform: translateY(3px) scale(.952); }
+  .digits span:nth-child(10) { transform: translateY(3px) scale(.946); }
+
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    90% { opacity: 1; }
+    91% { opacity: .75; }
+    92% { opacity: 1; }
+    94% { opacity: .85; }
+    95% { opacity: 1; }
+  }
+
+  /* 2️⃣ 玻璃管（中间层）——只做折射/高光，不遮挡辉光 */
+  .glass {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: 52px;
+    height: 112px;
+    border-radius: 24px / 28px;
+    background:
+      /* 侧边折射条 */
+      linear-gradient(95deg,
+        rgba(255,255,255,.10) 0%,
+        rgba(255,255,255,.02) 15%,
+        transparent 35%,
+        transparent 65%,
+        rgba(255,179,64,.04) 100%),
+      /* 顶部圆口高光 */
+      radial-gradient(ellipse at 50% 8%, rgba(255,255,255,.18) 0%, transparent 60%);
+    box-shadow:
+      /* 内侧暗角 */
+      inset 0 0 18px rgba(0,0,0,.55),
+      inset 3px 0 6px rgba(255,255,255,.05),
+      inset -4px 0 10px rgba(255,136,0,.08),
+      /* 玻璃边缘微光 */
+      0 0 0 1px rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.06);
+    pointer-events: none;
+    overflow: visible;            /* 关键：不切辉光 */
+  }
+  /* 玻璃顶部额外高光条 */
+  .glass::before {
+    content: "";
+    position: absolute;
+    top: 4px; left: 14%;
+    width: 28%; height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,.25), transparent);
+    filter: blur(1.5px);
+    pointer-events: none;
+  }
+
+  /* 3️⃣ 辉光外晕层（最外层）——用伪元素做大范围 bloom，完全独立 */
+  .tube::before {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    width: 70px;
+    height: 130px;
+    border-radius: 28px / 34px;
+    background: radial-gradient(ellipse at center,
+      rgba(255,179,64,.18) 0%,
+      rgba(255,136,0,.10) 30%,
+      rgba(255,85,0,.04) 55%,
+      transparent 80%);
+    filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  /* 只有当管内有数字点亮时才显示外晕（由 JS 切类控制） */
+  .tube.lit::before { opacity: 1; }
+
+  /* 管脚底座 */
+  .socket {
+    position: absolute;
+    bottom: -2px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    width: 58px; height: 28px;
+    border-radius: 7px;
+    background: linear-gradient(180deg, #3d4856, #15191f 75%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.12),
+      0 4px 10px rgba(0,0,0,.7);
+  }
+
+  /* 小数点管 */
+  .tube.dot .digits span {
+    font-family: "Share Tech Mono", monospace;
+    font-size: 60px;
+    -webkit-text-stroke: 0;
+    transform: translateY(22px);
+  }
+  .tube.dot .digits span.lit {
+    text-shadow:
+      0 0 2px  #fff8e8,
+      0 0 6px  var(--glow-core),
+      0 0 14px var(--glow-main),
+      0 0 28px var(--glow-halo);
+  }
+
+  /* ====== 标签与控件 ====== */
+  .label {
+    letter-spacing: .4em;
+    font-size: 12px;
+    color: rgba(255,255,255,.28);
+    text-transform: uppercase;
+  }
+  .label b { color: var(--teal); font-weight: normal; }
+
+  .controls { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  button {
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: .1em;
+    color: var(--teal);
+    background: rgba(62,217,197,.05);
+    border: 1px solid rgba(62,217,197,.3);
+    border-radius: 4px;
+    padding: 10px 22px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  button:hover {
+    background: rgba(62,217,197,.12);
+    box-shadow: 0 0 18px rgba(62,217,197,.25);
+  }
+  button.active {
+    color: var(--bg);
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+</style>
+</head>
+<body>
+
+<div class="crt"></div>
+
+<div class="label">DIVERGENCE <b id="modeLabel">METER</b> · WORLD LINE <b id="lineLabel">Steins Gate</b></div>
+
+<div class="meter" id="meter"></div>
+
+<div class="controls">
+  <button id="btnRandom">随机世界线</button>
+  <button id="btnSteins" class="active">1.048596 — Steins Gate</button>
+  <button id="btnClock">时钟模式</button>
+</div>
+
+<script>
+  const meter = document.getElementById('meter');
+  const TUBE_COUNT = 8;
+  const DOT_INDEX  = 1;
+
+  const tubes = [];
+  for (let i = 0; i < TUBE_COUNT; i++) {
+    const tube = document.createElement('div');
+    tube.className = 'tube' + (i === DOT_INDEX ? ' dot' : '');
+    tube.innerHTML = `
+      <div class="digits"></div>
+      <div class="glass"></div>
+      <div class="socket"></div>
+    `;
+    const digits = tube.querySelector('.digits');
+    const chars = i === DOT_INDEX ? ['.'] : '0123456789'.split('');
+    chars.forEach(c => {
+      const s = document.createElement('span');
+      s.textContent = c;
+      digits.appendChild(s);
+    });
+    meter.appendChild(tube);
+    tubes.push({ el: tube, spans: [...digits.children], current: null });
+  }
+
+  function light(tube, digit) {
+    tube.spans.forEach(s => s.classList.toggle('lit', s.textContent === String(digit)));
+    tube.current = String(digit);
+    tube.el.classList.toggle('lit', digit !== null);   // 控制外晕层
+  }
+
+  function rollTo(values) {
+    tubes.forEach((tube, i) => {
+      if (i === DOT_INDEX) { light(tube, '.'); return; }
+      const target = String(values[i]);
+      if (tube.current === target) return;
+      const spins = 9 + Math.floor(Math.random() * 5);
+      const stepMs = 50;
+      let n = 0;
+      const timer = setInterval(() => {
+        light(tube, Math.floor(Math.random() * 10));
+        if (++n >= spins + i * 2) {
+          clearInterval(timer);
+          light(tube, target);
+        }
+      }, stepMs);
+    });
+  }
+
+  function setValue(num) {
+    const str = Number(num).toFixed(6);
+    const chars = str.replace('.', '').split('');
+    const values = [chars[0], '.', ...chars.slice(1)];
+    rollTo(values);
+    document.getElementById('lineLabel').textContent =
+      Math.abs(num - 1.048596) < 1e-7 ? 'Steins Gate' : (num >= 1 ? 'α/γ' : 'β');
+    document.getElementById('btnSteins').classList.toggle('active', Math.abs(num - 1.048596) < 1e-7);
+  }
+
+  // 随机闪烁相位
+  tubes.forEach(t => t.spans.forEach(s => {
+    s.style.animationDelay = (Math.random() * 8).toFixed(2) + 's';
+  }));
+
+  // 模式控制
+  let clockTimer = null;
+  const btnClock = document.getElementById('btnClock');
+  const modeLabel = document.getElementById('modeLabel');
+
+  function startClock() {
+    btnClock.classList.add('active');
+    modeLabel.textContent = 'CLOCK';
+    const tick = () => {
+      const d = new Date();
+      const p = n => String(n).padStart(2, '0');
+      rollTo([p(d.getHours())[0], '.', p(d.getHours())[1],
+              p(d.getMinutes())[0], p(d.getMinutes())[1],
+              p(d.getSeconds())[0], p(d.getSeconds())[1], '0']);
+    };
+    tick();
+    clockTimer = setInterval(tick, 1000);
+  }
+  function stopClock() {
+    btnClock.classList.remove('active');
+    modeLabel.textContent = 'METER';
+    clearInterval(clockTimer);
+    clockTimer = null;
+  }
+
+  document.getElementById('btnRandom').onclick = () => { stopClock(); setValue(Math.random() * 2); };
+  document.getElementById('btnSteins').onclick = () => { stopClock(); setValue(1.048596); };
+  btnClock.onclick = () => clockTimer ? stopClock() || setValue(1.048596) : startClock();
+
+  // 初始值
+  setValue(1.048596);
+</script>
+</body>
+</html>

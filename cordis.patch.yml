@@ -1,0 +1,14 @@
+# dsh-skin-kurisu — DSH Bundle patch.
+#
+# Makise Kurisu skin: registers a web client plugin that
+#   1) overrides the alias-layer theme tokens (light + dark),
+#   2) injects one plugin-owned stylesheet with the wallpaper layers,
+#   3) adds a "Makise Kurisu" row under Settings → General.
+#
+# Applied with:  dsh plugin --profile desktop add .
+# or by copying this package into <profile>/node_modules and adding the
+# insert row below to <profile>/cordis.patch.yml.
+
+- insert:
+    - id: dsh-skin-kurisu
+      name: "dsh-skin-kurisu"

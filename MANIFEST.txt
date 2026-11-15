@@ -1,0 +1,29 @@
+kurisu-skin package backup manifest
+created       : 2026-11-15T22:33:51.4999800+08:00
+source        : <workspace>\kurisu-skin
+staged at     : <workspace>\kurisu-skin-backup\kurisu-skin-backup-20261115-223351
+mode          : SLIM (preview/ reduced to representative images)
+files         : 391
+bytes         : 25515631
+version       : 1.12.7
+
+asar facts at backup time (read-only):
+  app.asar bytes : 182034851
+  patch status   : run "research\native-splash\verify-applied-payload.mjs" after restore
+
+SHA-256 of key files:
+  18FA187FFA23C08F28D1603F8B02886D196090EAEA9E9A7F5C8A434FE7926D0E  src/client.template.js
+  868AD07F36B651A9249C7EA646557062F06BE423D0626267AABA1AAA0739705C  src/host.template.js
+  D505731A94717CAA53DDF2FD0AE5D6F050AACBB9722EB77B6CB454BCCD8D5851  src/sg-nixie.inline.js
+  D298F214512B963A294DC5393806341202D7BA6BAB6A29BA029182FC79364D62  lib/client.js
+  A59384F10E7021B84A361AE15A4BCF00BE0D17343DA53B4855FC66A1984F41CA  lib/index.js
+  531567D87BA8873130C09522D004444112AB3D9774169972561A0F7AA3F603E0  package.json
+  878A92FAABCC7A9A5B5216C66FD02F3F6829E533FC4EF133D540F0F31C2875A1  cordis.patch.yml
+  1E3F0080FE308226D66D126EFF411A65D1FD204A571C72342CBBC9F2295EA6CA  research/patch-asar-splash.mjs
+  F19F7DBA41D01E929EAD1515A57C194F2A4F9FEEE6FE2ADFA47262F5F763B2C7  research/native-splash/payload.mjs
+  6A223B19689D04CD06E58E2CE6D4F6EB9864E9BE33956DD5B7FAB2B25C3869ED  research/native-splash/fixture-test.mjs
+  1C7AE18D112C1055E958E4B2A3B8F5D7A693F32BF5EE3C7C550D56A749B8A097  research/native-splash/web-document.orig.js
+  53258A3D2B143ABFCE98C4D897B15122A49ED4400F102CAAE87425C293F28473  research/native-splash/header.orig.json
+  A8D7AACEB485F7A553E1FC3DC66F6107FB7B1EEA5D76EBCCD967FF36D46BD982  research/native-splash/backup-manifest.json
+
+Restore: extract, then follow BACKUP.md section 4 and APPLY.md sections A/B.
