@@ -1,0 +1,50 @@
+### dsh-client-ui-conversation__lib__client
+UserText_module_css_default = { "ellipsis": "HVrkaq_ellipsis", "root": "HVrkaq_root" }
+
+### dsh-client-ui-conversation__lib__client
+ReferenceChip_module_css_default = { "chip": "_8fhBKq_chip", "icon": "_8fhBKq_icon", "invalid": "_8fhBKq_invalid", "label": "_8fhBKq_label", "marker": "_8fhBKq_marker" }
+
+### dsh-client-ui-conversation__lib__client
+composer_editor_module_css_default = { "openable": "_0BdbEW_openable", "reference": "_0BdbEW_reference", "textRef": "_0BdbEW_textRef" }
+
+### dsh-client-ui-conversation__lib__client
+QueueDock_module_css_default = { "action": "x1ZYoW_action", "actions": "x1ZYoW_actions", "attachments": "x1ZYoW_attachments", "chevron": "x1ZYoW_chevron", "count": "x1ZYoW_count", "dock": "x1ZYoW_dock", "file": "x1ZYoW_file", "fileIcon": "x1ZYoW_fileIcon", "fileName": "x1ZYoW_fileName", "fileSize": "x1ZYoW_fileSize", "header": "x1ZYoW_header", "lead": "x1ZYoW_lead", "list": "x1ZYoW_list", "panel": "x1ZYoW_panel", "pendingRow": "x1ZYoW_pendingRow", "preview": "x1ZYoW_preview", "row": "x1ZYoW_row", "status": "x1ZYoW_status", "thumb": "x1ZYoW_thumb" }
+
+### dsh-client-ui-conversation__lib__client
+EnterBehaviorRow_module_css_default = { "chevron": "zTG_Vq_chevron", "desc": "zTG_Vq_desc", "row": "zTG_Vq_row", "rowText": "zTG_Vq_rowText", "selector": "zTG_Vq_selector", "title": "zTG_Vq_title" }
+
+### dsh-client-ui-conversation__lib__client
+ConversationRoot_module_css_default = { "body": "_727C8a_body", "composerHero": "_727C8a_composerHero", "composerSeat": "_727C8a_composerSeat", "composerStack": "_727C8a_composerStack", "crumb": "_727C8a_crumb", "crumbCurrent": "_727C8a_crumbCurrent", "crumbSeg": "_727C8a_crumbSeg", "crumbSep": "_727C8a_crumbSep", "crumbSubagent": "_727C8a_crumbSubagent", "crumbs": "_727C8a_crumbs", "embeddedBody": "_727C8a_embeddedBody", "header": "_727C8a_header", "headerActions": "_727C8a_headerActions", "headerBlank": "_727C8a_headerBlank", "headerCorner": "_727C8a_headerCorner", "headerLeading": "_727C8a_headerLeading", "headerSessionless": "_727C8a_headerSessionless", "headerUtilities": "_727C8a_headerUtilities", "heroOptions": "_727C8a_heroOptions", "heroWorkspaceRow": "_727C8a_heroWorkspaceRow", "root": "_727C8a_root", "scrollBody": "_727C8a_scrollBody", "tab": "_727C8a_tab", "tabActive": "_727C8a_tabActive", "tabs": "_727C8a_tabs", "titleCluster": "_727C8a_titleCluster", "titleRow": "_727C8a_titleRow", "viewArea": "_727C8a_viewArea", "widthHandle": "_727C8a_widthHandle" }
+
+### dsh-client-ui-conversation__lib__client
+HeroShell_module_css_default = { "body": "_7JJQrq_body", "chevron": "_7JJQrq_chevron", "fish": "_7JJQrq_fish", "fishHitbox": "_7JJQrq_fishHitbox", "folder": "_7JJQrq_folder", "headline": "_7JJQrq_headline", "hero-fish-swim": "_7JJQrq_hero-fish-swim", "modalAction": "_7JJQrq_modalAction", "modalError": "_7JJQrq_modalError", "modalInput": "_7JJQrq_modalInput", "previewBadge": "_7JJQrq_previewBadge", "root": "_7JJQrq_root", "stack": "_7JJQrq_stack", "titleGroup": "_7JJQrq_titleGroup", "workspace": "_7JJQrq_workspace", "workspaceLabel": "_7JJQrq_workspaceLabel", "workspaceRow": "_7JJQrq_workspaceRow" }
+
+### dsh-client-ui-conversation__lib__client
+ContextMeter_module_css_default = { "bar": "_6RMz1a_bar", "colorMessages": "_6RMz1a_colorMessages", "colorSystem": "_6RMz1a_colorSystem", "colorTools": "_6RMz1a_colorTools", "figures": "_6RMz1a_figures", "fill": "_6RMz1a_fill", "header": "_6RMz1a_header", "headline": "_6RMz1a_headline", "panel": "_6RMz1a_panel", "percent": "_6RMz1a_percent", "root": "_6RMz1a_root", "row": "_6RMz1a_row", "rows": "_6RMz1a_rows", "segment": "_6RMz1a_segment", "swatch": "_6RMz1a_swatch", "track": "_6RMz1a_track", "trigger": "_6RMz1a_trigger" }
+
+### dsh-client-ui-conversation__lib__client
+InputBar_module_css_default = { "accessory": "VERcba_accessory", "activity": "VERcba_activity", "activityExpanded": "VERcba_activityExpanded", "add": "VERcba_add", "card": "VERcba_card", "cardWorkspaceTrigger": "VERcba_cardWorkspaceTrigger", "dock": "VERcba_dock", "grow": "VERcba_grow", "hero": "VERcba_hero", "input": "VERcba_input", "input-pending": "VERcba_input-pending", "inputDisabled": "VERcba_inputDisabled", "modes": "VERcba_modes", "notice": "VERcba_notice", "overlayAnchor": "VERcba_overlayAnchor", "pending": "VERcba_pending", "placeholder": "VERcba_placeholder", "primary": "VERcba_primary", "retry": "VERcba_retry", "root": "VERcba_root", "row": "VERcba_row", "scroll": "VERcba_scroll", "select": "VERcba_select", "standardControls": "VERcba_standardControls", "tools": "VERcba_tools", "trailing": "VERcba_trailing", "trailingActive": "VERcba_trailingActive" }
+
+### dsh-client-ui-conversation__lib__client
+TodoPanel_module_css_default = { "body": "dv7Hzq_body", "chevron": "dv7Hzq_chevron", "content": "dv7Hzq_content", "glyph": "dv7Hzq_glyph", "header": "dv7Hzq_header", "item": "dv7Hzq_item", "lead": "dv7Hzq_lead", "list": "dv7Hzq_list", "progress": "dv7Hzq_progress", "root": "dv7Hzq_root", "title": "dv7Hzq_title" }
+
+### dsh-client-ui-layout__lib__client
+AppFrame_module_css_default = { "bottomRow": "MnhYfG_bottomRow", "centerCol": "MnhYfG_centerCol", "frame": "MnhYfG_frame", "handle": "MnhYfG_handle", "leadingSeat": "MnhYfG_leadingSeat", "overlayLayer": "MnhYfG_overlayLayer", "rightbarCol": "MnhYfG_rightbarCol", "sidebarCol": "MnhYfG_sidebarCol" }
+
+### dsh-client-ui-sidebar__lib__client
+HeaderLeadingControls_module_css_default = { "controls": "Fqqb4W_controls", "iconButton": "Fqqb4W_iconButton" }
+
+### dsh-client-ui-sidebar__lib__client
+SidebarRoot_module_css_default = { "brand": "bJOniG_brand", "brandIdentity": "bJOniG_brandIdentity", "brandMark": "bJOniG_brandMark", "brandName": "bJOniG_brandName", "buildVersion": "bJOniG_buildVersion", "collapsed": "bJOniG_collapsed", "fading": "bJOniG_fading", "fallbackBrandName": "bJOniG_fallbackBrandName", "footArea": "bJOniG_footArea", "footerActions": "bJOniG_footerActions", "iconButton": "bJOniG_iconButton", "localBuildBrand": "bJOniG_localBuildBrand", "localBuildTitle": "bJOniG_localBuildTitle", "logoRow": "bJOniG_logoRow", "newSession": "bJOniG_newSession", "newSessionContent": "bJOniG_newSessionContent", "newSessionLabel": "bJOniG_newSessionLabel", "newSessionLabelMask": "bJOniG_newSessionLabelMask", "newSessionShortcut": "bJOniG_newSessionShortcut", "panelActive": "bJOniG_panelActive", "panelGlyph": "bJOniG_panelGlyph", "panelIcon": "bJOniG_panelIcon", "panelList": "bJOniG_panelList", "panelRow": "bJOniG_panelRow", "panelTitle": "bJOniG_panelTitle", "quietBars": "bJOniG_quietBars", "rail-fade-in": "bJOniG_rail-fade-in", "rail-in": "bJOniG_rail-in", "railIn": "bJOniG_railIn", "railMark": "bJOniG_railMark", "regionArea": "bJOniG_regionArea", "root": "bJOniG_root", "settingsArea": "bJOniG_settingsArea", "toggle": "bJOniG_toggle", "topStrip": "bJOniG_topStrip", "wide": "bJOniG_wide", "wide-in": "bJOniG_wide-in" }
+
+### dsh-client-ui-theme__lib__client
+AppearanceRow_module_css_default = { "cubeRow": "_4BijOq_cubeRow", "group": "_4BijOq_group", "selected": "_4BijOq_selected", "themeCube": "_4BijOq_themeCube", "title": "_4BijOq_title" }
+
+### dsh-client-ui-theme__lib__client
+FontSizeRow_module_css_default = { "arrow": "_yHyNG_arrow", "arrows": "_yHyNG_arrows", "control": "_yHyNG_control", "desc": "_yHyNG_desc", "expander": "_yHyNG_expander", "row": "_yHyNG_row", "rowText": "_yHyNG_rowText", "stepper": "_yHyNG_stepper", "title": "_yHyNG_title", "unit": "_yHyNG_unit", "value": "_yHyNG_value" }
+
+### dsh-client-ui-theme__lib__client
+FontFamilyRow_module_css_default = { "field": "_37GO8a_field" }
+
+### dsh-client-ui-theme__lib__client
+FontSettingsGroup_module_css_default = { "group": "LD9eHW_group" }

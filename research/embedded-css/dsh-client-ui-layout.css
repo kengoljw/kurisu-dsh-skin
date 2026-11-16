@@ -1,0 +1,37 @@
+/* === css @ source line 73 === */
+.MnhYfG_frame{background:var(--dsw-alias-bg-base);grid-template-rows:minmax(0,1fr) auto;height:100%;display:grid;position:relative;overflow:hidden}
+.MnhYfG_frame[data-animating]{transition:grid-template-columns var(--ds-transition-duration-slow) var(--ds-ease-in-out)}
+.MnhYfG_frame[data-dragging]{transition:none}
+[data-windows-titlebar] .MnhYfG_frame{--dsh-windows-content-radius:16px;box-sizing:border-box;padding-top:var(--dsh-windows-titlebar-height);background:var(--dsw-specific-sidebar-fill)}
+[data-windows-titlebar] .MnhYfG_centerCol{background:var(--dsw-alias-bg-base);border-radius:var(--dsh-windows-content-radius) 0 0 0;corner-shape:round}
+[data-windows-titlebar] .MnhYfG_frame:before{content:"";height:var(--dsh-windows-titlebar-height);background:var(--dsw-specific-sidebar-fill);-webkit-app-region:drag;position:absolute;inset:0 0 auto}
+[data-windows-titlebar] .MnhYfG_sidebarCol{border-right:none}
+@media (prefers-reduced-motion:reduce){.MnhYfG_frame[data-animating]{transition:none}
+}
+.MnhYfG_sidebarCol{background:var(--dsw-specific-sidebar-fill);border-right:.5px solid var(--dsw-alias-border-l3);min-width:0;overflow:hidden}
+.MnhYfG_centerCol{flex-direction:column;min-width:0;display:flex;overflow:hidden}
+[data-platform=darwin] .MnhYfG_frame{background:0 0}
+html[data-platform=darwin]{--dsh-frame-top-clearance:48px}
+html[data-windows-titlebar]{--dsh-frame-top-clearance:var(--dsh-windows-titlebar-height);--dsh-frame-chrome-top:var(--dsh-windows-titlebar-height)}
+html[data-platform=darwin],html[data-windows-titlebar]{--dsh-frame-overlay-top:calc(var(--dsh-frame-top-clearance) + 20px)}
+html[data-platform=darwin][data-fullscreen],html[data-windows-titlebar][data-fullscreen]{--dsh-frame-overlay-top:20px;--dsh-frame-chrome-top:0px}
+[data-platform=darwin] .MnhYfG_sidebarCol{background:linear-gradient(to bottom, #7a9bf01a, #7a9bf000 35%, #8f89b800 68%, #8f89b817), color-mix(in srgb, color-mix(in srgb, var(--dsw-specific-sidebar-fill) 97%, #7a9bf0) 40%, transparent);border-right:none}
+[data-platform=darwin] [data-ds-dark-theme] .MnhYfG_sidebarCol{background:linear-gradient(to bottom, #7a9bf014, #7a9bf000 35%, #8f89b800 68%, #8f89b812), color-mix(in srgb, var(--dsw-specific-sidebar-fill) 50%, transparent)}
+@media (prefers-reduced-transparency:reduce){[data-platform=darwin] .MnhYfG_sidebarCol,[data-platform=darwin] [data-ds-dark-theme] .MnhYfG_sidebarCol{background:color-mix(in srgb, var(--dsw-specific-sidebar-fill) 90%, transparent)}
+}
+[data-platform=darwin] .MnhYfG_centerCol{background:var(--dsw-alias-bg-base);border-left:.5px solid var(--dsw-alias-border-l3)}
+[data-platform=darwin] .MnhYfG_rightbarCol{background:var(--dsw-alias-bg-base)}
+[data-platform=darwin] [data-sidebar-collapsed] .MnhYfG_centerCol{border-left:none}
+[data-platform=darwin] .MnhYfG_frame[data-sidebar-collapsed]{--dsh-frame-leading-clearance:160px}
+[data-platform=darwin][data-fullscreen] .MnhYfG_frame[data-sidebar-collapsed]{--dsh-frame-leading-clearance:84px}
+[data-platform=darwin][data-fullscreen] .MnhYfG_leadingSeat{left:12px}
+.MnhYfG_leadingSeat{z-index:15;-webkit-app-region:no-drag;align-items:center;display:flex;position:absolute;top:11px;left:88px}
+.MnhYfG_handle{cursor:col-resize;z-index:11;touch-action:none;grid-area:1/1/2/-1;width:8px;margin-left:-4px;position:absolute;top:0;bottom:0}
+.MnhYfG_frame[data-animating] .MnhYfG_handle{transition:left var(--ds-transition-duration-slow) var(--ds-ease-in-out)}
+.MnhYfG_frame[data-dragging] .MnhYfG_handle,.MnhYfG_frame[data-rightbar-fullscreen],.MnhYfG_frame[data-rightbar-fullscreen] .MnhYfG_handle,.MnhYfG_frame[data-rightbar-instant],.MnhYfG_frame[data-rightbar-instant] .MnhYfG_handle{transition:none}
+@media (prefers-reduced-motion:reduce){.MnhYfG_frame[data-animating] .MnhYfG_handle{transition:none}
+}
+.MnhYfG_rightbarCol{min-width:0;position:relative;overflow:visible}
+.MnhYfG_bottomRow{background:var(--dsw-alias-bg-base);grid-column:1/-1;min-width:0;min-height:0;overflow:auto}
+.MnhYfG_overlayLayer{z-index:20;pointer-events:none;position:absolute;inset:0}
+.MnhYfG_overlayLayer>*{pointer-events:auto}

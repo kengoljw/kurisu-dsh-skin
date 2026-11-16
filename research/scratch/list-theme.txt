@@ -1,0 +1,15 @@
+     121309  node_modules/@deepseek-ai/dsh-client-ui-theme/lib/client.js
+       8257  node_modules/@deepseek-ai/dsh-client-ui-theme/lib/index.js
+        554  node_modules/@deepseek-ai/dsh-client-ui-theme/lib/styles/brand-font.css
+      61548  node_modules/@deepseek-ai/dsh-client-ui-theme/lib/styles/montserrat-light.woff2
+      62148  node_modules/@deepseek-ai/dsh-client-ui-theme/lib/styles/montserrat-medium.woff2
+       4400  node_modules/@deepseek-ai/dsh-client-ui-theme/lib/styles/Montserrat-OFL.txt
+      62008  node_modules/@deepseek-ai/dsh-client-ui-theme/lib/styles/montserrat-regular.woff2
+       1065  node_modules/@deepseek-ai/dsh-client-ui-theme/LICENSE
+         44  node_modules/@deepseek-ai/dsh-client-ui-theme/locale/en.json
+        125  node_modules/@deepseek-ai/dsh-client-ui-theme/locale/zh.json
+       2338  node_modules/@deepseek-ai/dsh-client-ui-theme/package.json
+       2250  node_modules/@deepseek-ai/dsh-client-ui-theme/README.i18n.yaml
+      17261  node_modules/@deepseek-ai/dsh-client-ui-theme/README.md
+      16194  node_modules/@deepseek-ai/dsh-client-ui-theme/README.zh.md
+--- entries=20286 shown=14 jsonLen=5302170 dataStart=5302188

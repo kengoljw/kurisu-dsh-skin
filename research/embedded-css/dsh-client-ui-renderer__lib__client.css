@@ -1,0 +1,193 @@
+/* === chunk 1 (JS string literal) === */
+scope '${scope}
+' rendered without an installed adapter
+
+/* === chunk 2 (JS string literal) === */
+renderSlot('${key}
+') from a disposed registration
+
+/* === chunk 3 (JS string literal) === */
+slot '${key}
+' is not declared by this entry's children
+
+/* === chunk 4 (JS string literal) === */
+slot '${key}
+' is declared 'chain' — use renderSlotChain
+
+/* === chunk 5 (JS string literal) === */
+renderSlotChain('${key}
+') from a disposed registration
+
+/* === chunk 6 (JS string literal) === */
+slot '${key}
+' is not declared by this entry's children
+
+/* === chunk 7 (JS string literal) === */
+slot '${key}
+' is declared '${declared.kind}
+', not 'chain' — use renderSlot
+
+/* === chunk 8 (JS string literal) === */
+renderSlot('${key}
+') from a disposed Factory
+
+/* === chunk 9 (JS string literal) === */
+slot '${key}
+' is not declared by this Factory
+
+/* === chunk 10 (JS string literal) === */
+slot '${key}
+' is declared 'chain' — use renderSlotChain
+
+/* === chunk 11 (JS string literal) === */
+renderSlotChain('${key}
+') from a disposed Factory
+
+/* === chunk 12 (JS string literal) === */
+slot '${key}
+' is not declared by this Factory
+
+/* === chunk 13 (JS string literal) === */
+slot '${key}
+' is declared '${declared.kind}
+', not 'chain' — use renderSlot
+
+/* === chunk 14 (JS string literal) === */
+slot entry crashed in '${this.props.slotKey}
+':
+
+/* === chunk 15 (JS string literal) === */
+slot factory occurrence crashed in '${this.props.name}
+':
+
+/* === chunk 16 (JS string literal) === */
+strict standard hook '${name}
+' has no source
+
+/* === chunk 17 (JS string literal) === */
+strict keyed standard hook '${name}
+' has no source resolver
+
+/* === chunk 18 (JS string literal) === */
+scope '${scope}
+' rendered without a standard-source binding
+
+/* === chunk 19 (JS string literal) === */
+entry declares locale namespace '${entry.locale}
+' but no locale face is installed (locale plugin missing from the composition?)
+
+/* === chunk 20 (JS string literal) === */
+slot '${slotKey}
+' has contextual injected Hooks but no hookContext
+
+/* === chunk 21 (JS string literal) === */
+useFactorySlot('${name}
+') from a disposed Factory
+
+/* === chunk 22 (JS string literal) === */
+local slot '${name}
+' is not declared by factory '${occurrence.definition.name}
+'
+
+/* === chunk 23 (JS string literal) === */
+local slot '${name}
+' from a disposed Factory
+
+/* === chunk 24 (JS string literal) === */
+local slot '${name}
+' rendered outside factory '${definition.name}
+'
+
+/* === chunk 25 (JS string literal) === */
+strict session local slot '${name}
+' from factory '${definition.name}
+' rendered without a scope binding
+
+/* === chunk 26 (JS string literal) === */
+session:${sessionGenerationKeyOf(localScopeBinding)}
+
+
+/* === chunk 27 (JS string literal) === */
+session-maybe:${localMaybeEpoch}
+
+
+/* === chunk 28 (JS string literal) === */
+factory '${definition.name}
+' local slot '${name}
+'
+
+/* === chunk 29 (JS string literal) === */
+factory '${definition.name}
+' local slot '${name}
+'
+
+/* === chunk 30 (JS string literal) === */
+factory declares locale namespace '${definition.locale}
+' but no locale face is installed
+
+/* === chunk 31 (JS string literal) === */
+strict session factory '${definition.name}
+' rendered without a scope binding
+
+/* === chunk 32 (JS string literal) === */
+factory '${definition.name}
+' inject
+
+/* === chunk 33 (JS string literal) === */
+factory '${definition.name}
+' occurrence
+
+/* === chunk 34 (JS string literal) === */
+recursive render of factory '${name}
+'
+
+/* === chunk 35 (JS string literal) === */
+local slot '${localName}
+' is not declared by factory '${name}
+'
+
+/* === chunk 36 (JS string literal) === */
+session:${sessionGenerationKeyOf(binding)}
+
+
+/* === chunk 37 (JS string literal) === */
+session-maybe:${maybeEpoch}
+
+
+/* === chunk 38 (JS string literal) === */
+strict session slot '${slotKey}
+' rendered without a scope binding
+
+/* === chunk 39 (JS string literal) === */
+strict session slot '${slotKey}
+' rendered without a scope binding
+
+/* === chunk 40 (JS string literal) === */
+e${entryKeyOf(item.entry)}
+
+
+/* === chunk 41 (JS string literal) === */
+slots.inject(${JSON.stringify(key)}
+): declaration
+
+/* === chunk 42 (JS string literal) === */
+slots.inject(${JSON.stringify(key)}
+)
+
+/* === chunk 43 (JS string literal) === */
+slot scope '${scope}
+' already has an adapter
+
+/* === chunk 44 (JS string literal) === */
+slots.installScope(${JSON.stringify(scope)}
+)
+
+/* === chunk 45 (JS string literal) === */
+slots: store scope ${binding.key}
+
+
+/* === chunk 46 (JS string literal) === */
+duplicate root standard ${kind}
+ '${name}
+' at prop '${propName}
+'

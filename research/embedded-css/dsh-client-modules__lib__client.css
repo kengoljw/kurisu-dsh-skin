@@ -1,0 +1,103 @@
+/* === chunk 1 (JS string literal) === */
+window.__ModuleLoader__.load({id, factory}
+)
+
+/* === chunk 2 (JS string literal) === */
+client-modules: ${subject}
+ ${field}
+ must be a string array
+
+/* === chunk 3 (JS string literal) === */
+client-modules: ${pkgName}
+ has a non-object dsh.client declaration
+
+/* === chunk 4 (JS string literal) === */
+client-modules: ${pkgName}
+ dsh.client.platform must be a string
+
+/* === chunk 5 (JS string literal) === */
+client-modules: ${pkgName}
+ dsh.client.immediately must be a boolean
+
+/* === chunk 6 (JS string literal) === */
+client-modules: boot manifest entry ${where}
+ must carry string id/url/rev
+
+/* === chunk 7 (JS string literal) === */
+boot manifest entry ${where}
+
+
+/* === chunk 8 (JS string literal) === */
+client-modules: boot manifest entry ${where}
+ immediately must be a boolean
+
+/* === chunk 9 (JS string literal) === */
+client-modules: boot manifest ${phase}
+ batch must carry string url/rev
+
+/* === chunk 10 (JS string literal) === */
+client-modules: boot manifest carries duplicate batch URL ${JSON.stringify(batch.url)}
+
+
+/* === chunk 11 (JS string literal) === */
+boot manifest ${phase}
+ batch
+
+/* === chunk 12 (JS string literal) === */
+client-modules: boot manifest ${phase}
+ batch entries must be a non-empty string array
+
+/* === chunk 13 (JS string literal) === */
+client-modules: ${label}
+ subscriber failed
+
+/* === chunk 14 (JS string literal) === */
+client-modules: Host release changed from ${describeRelease(previous)}
+ to ${describeRelease(release)}
+;
+   plugin updates pause until this page reloads
+
+/* === chunk 15 (JS string literal) === */
+client-modules: ${id}
+ import failed (see console)
+
+/* === chunk 16 (JS string literal) === */
+client-modules: ${id}
+ import failed (see console)
+
+/* === chunk 17 (JS string literal) === */
+client-modules: ${id}
+ is waiting for activation
+
+/* === chunk 18 (JS string literal) === */
+client-modules: bundle script ${url}
+ failed to load
+
+/* === chunk 19 (JS string literal) === */
+client-modules: bundle URL ${url}
+ has no revision
+
+/* === chunk 20 (JS string literal) === */
+client-modules: cannot resolve chunk ${JSON.stringify(fileName)}
+ from bundle URL ${url}
+
+
+/* === chunk 21 (JS string literal) === */
+style[data-plugin=${JSON.stringify(id)}
+]
+
+/* === chunk 22 (JS string literal) === */
+client-modules: replacing bootstrap module ${id}
+ requires a page reload
+
+/* === chunk 23 (JS string literal) === */
+client-modules: invalid package-local chunk ${JSON.stringify(registration.chunk)}
+
+
+/* === chunk 24 (JS string literal) === */
+client-modules: invalid relative chunk request ${JSON.stringify(spec)}
+
+
+/* === chunk 25 (JS string literal) === */
+client-modules: removing bootstrap module ${id}
+ requires a page reload

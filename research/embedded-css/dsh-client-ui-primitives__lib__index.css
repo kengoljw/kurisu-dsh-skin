@@ -1,0 +1,35 @@
+/* === chunk 1 (JS string literal) === */
+repeat(${items.length}
+, minmax(0, 1fr))
+
+/* === chunk 2 (JS string literal) === */
+calc((100% - 8px) / ${items.length}
+)
+
+/* === chunk 3 (JS string literal) === */
+translateX(${selectedIndex * 100}
+%)
+
+/* === chunk 4 (JS string literal) === */
+unreachable traditional file type: ${String(value)}
+
+
+/* === chunk 5 (JS string literal) === */
+unreachable link icon kind: ${String(value)}
+
+
+/* === chunk 6 (JS string literal) === */
+plugin card has no field ${field}
+
+
+/* === chunk 7 (JS string literal) === */
+s${String(part.length)}
+:${part}
+
+
+/* === chunk 8 (JS string literal) === */
+unreachable diff row kind: ${String(value)}
+
+
+/* === chunk 9 (JS string literal) === */
+tailHeader:${rowKey(tailHeader)}

@@ -1,0 +1,71 @@
+/* === chunk 1 (JS string literal) === */
+window.__ModuleLoader__.load({id, factory}
+)
+
+/* === chunk 2 (JS string literal) === */
+client-modules: ${subject}
+ ${field}
+ must be a string array
+
+/* === chunk 3 (JS string literal) === */
+client-modules: ${pkgName}
+ has a non-object dsh.client declaration
+
+/* === chunk 4 (JS string literal) === */
+client-modules: ${pkgName}
+ dsh.client.platform must be a string
+
+/* === chunk 5 (JS string literal) === */
+client-modules: ${pkgName}
+ dsh.client.immediately must be a boolean
+
+/* === chunk 6 (JS string literal) === */
+client-modules: client bundle not found;
+   ${CLIENT_BUNDLE_BUILD_INSTRUCTION}
+:
+
+/* === chunk 7 (JS string literal) === */
+  package: ${packageName}
+
+
+/* === chunk 8 (JS string literal) === */
+  path: ${clientPath}
+
+
+/* === chunk 9 (JS string literal) === */
+client-modules: ${String(failures.length)}
+ client ${packageNoun}
+ failed to compose:
+
+/* === chunk 10 (JS string literal) === */
+  client bundles not found;
+   ${CLIENT_BUNDLE_BUILD_INSTRUCTION}
+:
+
+/* === chunk 11 (JS string literal) === */
+      path: ${error.clientPath}
+
+
+/* === chunk 12 (JS string literal) === */
+client-modules: ${record.entry.id}
+ exceeds the ${String(MAX_COMBO_URL_BYTES)}
+-byte combo URL limit
+
+/* === chunk 13 (JS string literal) === */
+client-modules: ${record.entry.id}
+ exceeds the ${String(MAX_COMBO_URL_BYTES)}
+-byte combo URL limit
+
+/* === chunk 14 (JS string literal) === */
+client-modules: ${clientPath}
+.map is not a regular Source Map v3 object
+
+/* === chunk 15 (JS string literal) === */
+client-modules: loader entry ${loaderName}
+ has no resolution base URL
+
+/* === chunk 16 (JS string literal) === */
+client-modules: package ${packageName}
+ resolves from multiple active Loader sources: ${locations}
+;
+   remove one entry

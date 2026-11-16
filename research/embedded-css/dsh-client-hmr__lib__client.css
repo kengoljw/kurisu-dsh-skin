@@ -1,0 +1,20 @@
+/* === chunk 1 (JS string literal) === */
+Buffered data exceeded max buffer size of ${maxBufferSize}
+ characters
+
+/* === chunk 2 (JS string literal) === */
+client-hmr: ${EVENTS_ROUTE}
+ answered ${String(response.status)}
+
+
+/* === chunk 3 (JS string literal) === */
+client-hmr: ${EVENTS_ROUTE}
+ closed;
+   client graph changes stop until the page reloads
+
+/* === chunk 4 (JS string literal) === */
+client-hmr: unparseable event frame: ${data}
+
+
+/* === chunk 5 (JS string literal) === */
+client-hmr: invalid event frame: ${data}

@@ -1,0 +1,28 @@
+/* === chunk 1 (JS string literal) === */
+length:${step}
+:${offset}
+
+
+/* === chunk 2 (JS string literal) === */
+ui-session: duplicate pending interaction key '${interaction.key}
+'
+
+/* === chunk 3 (JS string literal) === */
+ui-session: binding ${owner.sessionId}
+
+
+/* === chunk 4 (JS string literal) === */
+uiSession.provide: undeclared ${kind}
+ '${name}
+'
+
+/* === chunk 5 (JS string literal) === */
+uiSession.provide: missing ${kind}
+ '${name}
+'
+
+/* === chunk 6 (JS string literal) === */
+uiSession.provide: duplicate ${kind}
+ '${name}
+' at prop '${propName}
+'

@@ -1,0 +1,52 @@
+{
+  "version": 2,
+  "createdAt": "2026-11-11T13:38:08.803Z",
+  "asar": "<install>\AppData\\Local\\Programs\\DSH NEXT\\resources\\app.asar",
+  "entry": "lib/web-document.js",
+  "originalLength": 180923876,
+  "jsonSize": 5302170,
+  "headerSize": 5302180,
+  "base": 5302188,
+  "entryCount": 20286,
+  "oldEntry": {
+    "offset": "175598547",
+    "size": 8457,
+    "hadIntegrity": true
+  },
+  "applied": {
+    "offset": "175621688",
+    "size": 277606
+  },
+  "samples": [
+    {
+      "path": "node_modules/@agentclientprotocol/sdk/LICENSE",
+      "offset": "0",
+      "size": 10783,
+      "sha256": "6ed4f049cce59e05197d585bdf8a39980b45d546d6ea718ee344555f3a867c3a"
+    },
+    {
+      "path": "node_modules/@agentclientprotocol/sdk/README.md",
+      "offset": "10783",
+      "size": 3164,
+      "sha256": "ba78341691579624c2460e282c8fb79414eeaed493d416b1b0793b912b3bffa2"
+    },
+    {
+      "path": "node_modules/@agentclientprotocol/sdk/dist/connection.js",
+      "offset": "300808",
+      "size": 15224,
+      "sha256": "bea9070ef6e863f828d98757344006800c9967f41b0ab2ea19d6eaca95c77474"
+    },
+    {
+      "path": "node_modules/@agentclientprotocol/sdk/dist/connection.test.js",
+      "offset": "316032",
+      "size": 19319,
+      "sha256": "ce51393c3bfebedaa18b7f3f184ac04c89a9571a595809dea3dc01bdead47caf"
+    },
+    {
+      "path": "node_modules/@agentclientprotocol/sdk/dist/cookie-store.js",
+      "offset": "335351",
+      "size": 2788,
+      "sha256": "83965bf1463eb957696e3663f6f27547d3e6c04ce66da210bda7023d85452f8a"
+    }
+  ]
+}

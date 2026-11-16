@@ -1,0 +1,110 @@
+/* === chunk 1 (JS string literal) === */
+[Symbol(${segment.toString()}
+)]
+
+/* === chunk 2 (JS string literal) === */
+Schema<${this.type}
+>
+
+/* === chunk 3 (JS string literal) === */
+cannot infer schema from ${source}
+
+
+/* === chunk 4 (JS string literal) === */
+expected ArrayBufferSource but got ${value}
+
+
+/* === chunk 5 (JS string literal) === */
+expected nullable but got ${data}
+
+
+/* === chunk 6 (JS string literal) === */
+expected ${value}
+ but got ${data}
+
+
+/* === chunk 7 (JS string literal) === */
+expected ${description}
+ <= ${max}
+ but got ${data}
+
+
+/* === chunk 8 (JS string literal) === */
+expected ${description}
+ >= ${min}
+ but got ${data}
+
+
+/* === chunk 9 (JS string literal) === */
+expected string but got ${data}
+
+
+/* === chunk 10 (JS string literal) === */
+expect string to match regexp ${regexp}
+
+
+/* === chunk 11 (JS string literal) === */
+expected number but got ${data}
+
+
+/* === chunk 12 (JS string literal) === */
+expected number multiple of ${step}
+ but got ${data}
+
+
+/* === chunk 13 (JS string literal) === */
+expected boolean but got ${data}
+
+
+/* === chunk 14 (JS string literal) === */
+expected string but got ${key}
+
+
+/* === chunk 15 (JS string literal) === */
+expected number or array but got ${data}
+
+
+/* === chunk 16 (JS string literal) === */
+expected ${constructor.name}
+ but got ${data}
+
+
+/* === chunk 17 (JS string literal) === */
+expected ${constructor}
+ but got ${data}
+
+
+/* === chunk 18 (JS string literal) === */
+expected ${constructor}
+ but got ${data}
+
+
+/* === chunk 19 (JS string literal) === */
+expected array but got ${data}
+
+
+/* === chunk 20 (JS string literal) === */
+expected object but got ${data}
+
+
+/* === chunk 21 (JS string literal) === */
+expected array but got ${data}
+
+
+/* === chunk 22 (JS string literal) === */
+expected object but got ${data}
+
+
+/* === chunk 23 (JS string literal) === */
+expected ${toString()}
+ but got ${JSON.stringify(data)}
+
+
+/* === chunk 24 (JS string literal) === */
+expected ${toString()}
+ but got ${JSON.stringify(data)}
+
+
+/* === chunk 25 (JS string literal) === */
+expected ${toString()}
+ but got ${JSON.stringify(data)}

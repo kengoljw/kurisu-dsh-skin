@@ -1,0 +1,1097 @@
+/* === chunk 1 (JS string literal) === */
+[cordis:${pluginId}
+]
+
+/* === chunk 2 (JS string literal) === */
+client half failed to parse in this browser: ${error.message}
+The browser half is plain JavaScript (no JSX, no TypeScript);
+   build elements with React.createElement.
+
+/* === chunk 3 (JS string literal) === */
+theme.overrideTokens(source, tokens) takes two arguments;
+   source is replaced with your package id, so pass any string first and the token map second: overrideTokens('mine', { '--dsw-alias-…': { light: '…', dark: '…' }
+ }
+)
+
+/* === chunk 4 (JS string literal) === */
+[cordis-client-runner] ${half.pluginId}
+ logged an error:
+
+/* === chunk 5 (JS string literal) === */
+[cordis-client-runner] automatic activation ${request.requestId}
+ failed:
+
+/* === chunk 6 (JS string literal) === */
+[cordis-client-runner] Client activation ${plan.pluginId}
+/${plan.packageId}
+ (${pluginRunId}
+) failed:
+
+/* === chunk 7 (JS string literal) === */
+[cordis-client-runner] answering run request ${requestId}
+ failed:
+
+/* === chunk 8 (JS string literal) === */
+search( query: string, signal: AbortSignal, ): Promise<RemoteResult<{ items: SessionSearchResultItem[];
+   hasMore: boolean }
+>>
+
+/* === chunk 9 (JS string literal) === */
+fork(opts: { sessionId: SessionId atSeq?: number increaseTitle?: boolean onCreated?: (childId: SessionId) => void /** False refuses source migration;
+   omission preserves the Host default. */ allowMigration?: boolean }
+): Promise<SessionId>
+
+/* === chunk 10 (JS string literal) === */
+token-name → `{ light, dark }
+` value pairs. Validated at runtime (model-authored callers reach this boundary with untyped JS);
+   a bare string value throws a teaching error.
+
+/* === chunk 11 (JS string literal) === */
+archiveSession(sessionId: SessionId, options?: { readonly stopActivity?: boolean }
+): Promise<void>
+
+/* === chunk 12 (JS string literal) === */
+create(input: { path: string }
+): Promise<WorkspaceView>
+
+/* === chunk 13 (JS string literal) === */
+archiveSession(sessionId: SessionId, options?: { readonly stopActivity?: boolean }
+): Promise<void>
+
+/* === chunk 14 (JS string literal) === */
+export type AgentContext = Omit<Context, 'remote'> & {
+    readonly remote: ClientRemote & TypertRemoteScopeApi<'agent'>;
+}
+;
+  
+
+/* === chunk 15 (JS string literal) === */
+export interface AssistantLiveChunkEvent {
+    readonly type: 'assistant/live-chunk';
+    readonly seq: number;
+    readonly time: number;
+    readonly data: {
+        readonly attemptId: LlmAttemptId;
+        readonly turn: number;
+        readonly step: number;
+        readonly chunk: StreamChunk;
+    }
+;
+}
+
+
+/* === chunk 16 (JS string literal) === */
+export type BakedActions<T, A extends ActionsDecl<T>> = {
+    [K in keyof A]: A[K] extends (draft: T, ...params: infer P) => void ? (...params: P) => void : never;
+}
+;
+  
+
+/* === chunk 17 (JS string literal) === */
+export interface BeginSubmissionInput {
+    readonly mode: 'queue' | 'steer';
+    readonly text: string;
+    readonly attachments: readonly PendingSubmissionAttachment[];
+    readonly onRetire?: (retirement: PendingSubmissionRetirement) => void;
+}
+
+
+/* === chunk 18 (JS string literal) === */
+export interface ChainRenderOpts {
+    fallback?: ReactNode;
+    fallbackOnly?: boolean;
+    overlay?: boolean;
+}
+
+
+/* === chunk 19 (JS string literal) === */
+export type ChildrenDecl = {
+    [P in keyof SlotMap & string]?: SlotSpec<SlotMap[P]>;
+}
+;
+  
+
+/* === chunk 20 (JS string literal) === */
+export interface ClientConnectionRpc {
+    call(channel: string, endpoint: string, payload: unknown, signal?: AbortSignal): Promise<ConnectionRpcResult<unknown>>;
+    readonly open?: (channel: string, endpoint: string, payload: unknown, signal: AbortSignal, uplink?: AsyncIterable<unknown>) => AsyncIterable<unknown>;
+}
+
+
+/* === chunk 21 (JS string literal) === */
+export interface ClientRemote extends TypertClientRemote {
+    $stream<Item>(options: RemoteStreamOptions<Item>): RemoteStream<Item>;
+    readonly $host: RemoteHostFacts;
+}
+
+
+/* === chunk 22 (JS string literal) === */
+export type CommonKeyOf = LocaleNamespaceMap extends {
+    common: infer C;
+}
+ ? C & string : never;
+  
+
+/* === chunk 23 (JS string literal) === */
+export interface ConnectionGeneration {
+    readonly id: number;
+    readonly host: ConnectionHostInfo;
+}
+
+
+/* === chunk 24 (JS string literal) === */
+export interface ConnectionGenerationState {
+    getSnapshot(): ConnectionGeneration | undefined;
+    subscribe(listener: () => void): () => void;
+}
+
+
+/* === chunk 25 (JS string literal) === */
+export interface ConnectionHandle {
+    readonly interactions: ConnectionInteractions;
+    readonly isLoopback: boolean;
+    readonly generation: ConnectionGenerationState;
+    readonly state: ConnectionStateSource;
+    readonly rpc: ClientConnectionRpc;
+    openWebSocket(path: string): ConnectionWebSocket;
+    reconnect(): void;
+    registerGenerationSource(source: ConnectionGenerationSource): () => void;
+    start(sinks: ConnectionSinks, config?: ConnectionRecoveryConfig): ConnectionLoop;
+}
+
+
+/* === chunk 26 (JS string literal) === */
+export interface ConnectionHostInfo {
+    readonly home: string;
+}
+
+
+/* === chunk 27 (JS string literal) === */
+export interface ConnectionLoop {
+    stop(): void;
+}
+
+
+/* === chunk 28 (JS string literal) === */
+export interface ConnectionRecoveryConfig {
+    backoffBaseMs?: number;
+    backoffFactor?: number;
+    backoffMaxMs?: number;
+    generationReadyWarnMs?: number;
+    generationReadyTimeoutMs?: number;
+}
+
+
+/* === chunk 29 (JS string literal) === */
+export interface ConnectionRpcFailure {
+    readonly code: string;
+    readonly message: string;
+    readonly details: object;
+}
+
+
+/* === chunk 30 (JS string literal) === */
+export type ConnectionRpcResult<T> = {
+    readonly ok: true;
+    readonly value: T;
+}
+ | {
+    readonly ok: false;
+    readonly error: ConnectionRpcFailure;
+}
+;
+  
+
+/* === chunk 31 (JS string literal) === */
+export interface ConnectionSinks {
+    onConnected?: (host: ConnectionHostInfo) => void;
+    onStateChange?: (state: ConnectionState) => void;
+    onReconnectRequested?: () => void;
+}
+
+
+/* === chunk 32 (JS string literal) === */
+export interface ConnectionStateSource {
+    getSnapshot(): ConnectionState | undefined;
+    subscribe(listener: () => void): () => void;
+}
+
+
+/* === chunk 33 (JS string literal) === */
+export interface ConnectionWebSocket {
+    readonly readyState: number;
+    send(data: string): void;
+    close(code?: number, reason?: string): void;
+    addEventListener<Event extends keyof ConnectionWebSocketEventMap>(event: Event, listener: (event: ConnectionWebSocketEventMap[Event]) => void, options?: {
+        readonly once?: boolean;
+    }
+): void;
+    removeEventListener<Event extends keyof ConnectionWebSocketEventMap>(event: Event, listener: (event: ConnectionWebSocketEventMap[Event]) => void): void;
+}
+
+
+/* === chunk 34 (JS string literal) === */
+export interface ConnectionWebSocketEventMap {
+    readonly open: object;
+    readonly error: object;
+    readonly close: object;
+    readonly message: {
+        readonly data: unknown;
+    }
+;
+}
+
+
+/* === chunk 35 (JS string literal) === */
+export interface DraftInitializationOptions {
+    readonly prompt?: string;
+    readonly clearPreviousDraft?: boolean;
+}
+
+
+/* === chunk 36 (JS string literal) === */
+export type EntryKeyOf<K extends keyof SlotMap & string> = SlotMap[K] extends {
+    kind: 'keyed';
+    keyProps: infer P extends object;
+}
+ ? keyof P & string : string;
+  
+
+/* === chunk 37 (JS string literal) === */
+export type FactoryComponentPropsOf<F extends keyof SlotFactoryMap & string> = FactoryInputPropsOf<F> & FactoryRegistrationPropsOf<F> & ScopeStandardProps<FactoryDefOf<F>['scope']> & {
+    useFactorySlot: UseFactorySlot<F>;
+}
+;
+  
+
+/* === chunk 38 (JS string literal) === */
+export interface GlobalStandardProps {
+}
+
+
+/* === chunk 39 (JS string literal) === */
+export type InjectFace<I extends object> = I extends {
+    hooks: infer HS extends HooksSources;
+}
+ ? I extends {
+    keyedHooks: infer KS extends KeyedHooksSources;
+}
+ ? Omit<I, 'hooks' | 'keyedHooks'> & PropsHooks<HS> & PropsKeyedHooks<KS> : Omit<I, 'hooks'> & PropsHooks<HS> : I extends {
+    keyedHooks: infer KS extends KeyedHooksSources;
+}
+ ? Omit<I, 'keyedHooks'> & PropsKeyedHooks<KS> : I;
+  
+
+/* === chunk 40 (JS string literal) === */
+export interface ISession {
+    readonly sessionId: SessionId;
+    readonly projections: ProjectionsFace;
+    beginSubmission(input: BeginSubmissionInput): SubmissionHandle;
+    prompt(content: PromptContentPart[], mode: 'queue' | 'steer', signal?: AbortSignal, requestId?: SessionRequestId): Promise<RemoteResult<{
+        accepted: true;
+    }
+>>;
+    readAttachment(attachmentId: AttachmentIdType): Promise<RemoteResult<{
+        attachment: ImageAttachmentRef;
+        data: Uint8Array;
+    }
+>>;
+    updateQueue(itemId: MessageId, action: QueueAction): Promise<RemoteResult<{
+        accepted: true;
+    }
+>>;
+    cancel(): Promise<RemoteResult<{
+        accepted: true;
+    }
+>>;
+    rename(title: string): Promise<RemoteResult<{
+        title: string;
+        seq: SessionSeq;
+    }
+>>;
+    loadOlder(): Promise<void>;
+    loadThrough(seq: SessionSeq): Promise<void>;
+    command(line: string): Promise<RemoteResult<{
+        matched: boolean;
+    }
+>>;
+}
+
+
+/* === chunk 41 (JS string literal) === */
+export interface ISessions {
+    readonly list: ObservableSnapshot<SessionListState>;
+    retain(target: SessionTarget, options: SessionRetainOptions): SessionReference;
+    using<T>(target: SessionTarget, options: SessionRetainOptions, operation: (reference: SessionReference) => T | Promise<T>): Promise<T>;
+    retainInfo(id: SessionId): ObservableSnapshot<SessionRetainInfo>;
+    readonly searchResultLimit: number;
+    create(opts?: {
+        workspaceId?: WorkspaceId;
+        cwd?: string;
+        sessionId?: SessionId;
+        agentPreset?: string;
+    }
+): Promise<SessionId>;
+    subagentAddress(id: SessionId): SubagentAddress | undefined;
+    refreshProjections(sessionId: SessionId): Promise<void>;
+    refresh(): Promise<void>;
+    search(query: string, signal: AbortSignal): Promise<RemoteResult<{
+        items: SessionSearchResultItem[];
+        hasMore: boolean;
+    }
+>>;
+    fork(opts: {
+        sessionId: SessionId;
+        atSeq?: number;
+        increaseTitle?: boolean;
+        onCreated?: (childId: SessionId) => void;
+        allowMigration?: boolean;
+    }
+): Promise<SessionId>;
+    scope(id: SessionId): AgentContext | undefined;
+    scopeOf(ctx: Context): SessionId | undefined;
+    sessionOf(ctx: Context): SessionFace | undefined;
+    binding(id: SessionId): SessionBinding | undefined;
+}
+
+
+/* === chunk 42 (JS string literal) === */
+export type KeyedSnapshotSelectorHook<Snapshot> = {
+    (key: string): Snapshot | undefined;
+    <Selected>(key: string, selector: (value: Snapshot | undefined) => Selected, equal?: (left: Selected, right: Selected) => boolean): Selected;
+}
+;
+  
+
+/* === chunk 43 (JS string literal) === */
+export type KeyPropsOf<K extends keyof SlotMap & string, EntryKey extends EntryKeyOf<K>> = SlotMap[K] extends {
+    kind: 'keyed';
+    keyProps: infer P extends object;
+}
+ ? EntryKey extends keyof P ? P[EntryKey] extends object ? P[EntryKey] : never : never : object;
+  
+
+/* === chunk 44 (JS string literal) === */
+export interface LanguageRegistration {
+    id: LocaleId;
+    label: string;
+    fallback: LocaleId;
+}
+
+
+/* === chunk 45 (JS string literal) === */
+export interface LiveFactoryNode {
+    type: 'factory';
+    name: string;
+    scope: SlotScope;
+    registrant?: string;
+    children: LiveSlotNode[];
+}
+
+
+/* === chunk 46 (JS string literal) === */
+export interface LiveSlotNode {
+    type: 'slot';
+    name: string;
+    kind: SlotKind;
+    scope: SlotScope;
+    declaredBy?: string;
+    occupants: LiveSlotOccupant[];
+    children: LiveSlotNode[];
+}
+
+
+/* === chunk 47 (JS string literal) === */
+export interface LiveSlotOccupant {
+    registrant?: string;
+    key?: string;
+    id?: string;
+    order?: number;
+    priority: number;
+    active: boolean;
+}
+
+
+/* === chunk 48 (JS string literal) === */
+export interface LocaleDefinition {
+    readonly id: LocaleId;
+    readonly label: string;
+    readonly fallback?: LocaleId;
+}
+
+
+/* === chunk 49 (JS string literal) === */
+export interface LocaleNamespaceMap {
+}
+
+
+/* === chunk 50 (JS string literal) === */
+export interface LocaleSnapshot {
+    active: LocaleId;
+    locales: readonly LocaleDefinition[];
+    revision: number;
+}
+
+
+/* === chunk 51 (JS string literal) === */
+export type MatchedShare<E extends SlotEntryDef, M> = E['kind'] extends 'chain' ? {
+    matched: M;
+}
+ : object;
+  
+
+/* === chunk 52 (JS string literal) === */
+export interface ObservableSnapshot<T> {
+    getSnapshot(): T;
+    subscribe(fn: () => void): () => void;
+}
+
+
+/* === chunk 53 (JS string literal) === */
+export type OwnerOf<K extends keyof SlotMap & string> = SlotMap[K] extends {
+    owner: infer O extends object;
+}
+ ? O : object;
+  
+
+/* === chunk 54 (JS string literal) === */
+export interface PendingSubmission {
+    readonly requestId: SessionRequestId;
+    readonly placement: PendingSubmissionPlacement;
+    readonly time: number;
+    readonly text: string;
+    readonly attachments: readonly PendingSubmissionAttachment[];
+}
+
+
+/* === chunk 55 (JS string literal) === */
+export interface PendingSubmissionFileAttachment {
+    readonly type: 'file';
+    readonly value: FileAttachmentRef;
+}
+
+
+/* === chunk 56 (JS string literal) === */
+export interface PendingSubmissionImage {
+    readonly previewUrl: string;
+    readonly name?: string;
+    readonly width?: number;
+    readonly height?: number;
+}
+
+
+/* === chunk 57 (JS string literal) === */
+export interface PendingSubmissionImageAttachment {
+    readonly type: 'image';
+    readonly value: PendingSubmissionImage;
+}
+
+
+/* === chunk 58 (JS string literal) === */
+export type PendingSubmissionRetirement = {
+    readonly reason: 'observed';
+    readonly attachments: readonly (ImageAttachmentRef | FileAttachmentRef)[];
+}
+ | {
+    readonly reason: 'failed';
+}
+;
+  
+
+/* === chunk 59 (JS string literal) === */
+export interface ProjectionsFace {
+    faceOf(key: string): ObservableSnapshot<unknown>;
+}
+
+
+/* === chunk 60 (JS string literal) === */
+export type PromptContentPart = {
+    readonly type: 'text';
+    readonly text: string;
+}
+ | {
+    readonly type: 'image';
+    readonly mediaType: ImageMediaType;
+    readonly data: string;
+    readonly name?: string;
+}
+ | {
+    readonly type: 'file';
+    readonly receiptId: Branded<'file-upload-receipt-id'>;
+}
+;
+  
+
+/* === chunk 61 (JS string literal) === */
+export interface PromptError {
+    readonly op: 'send' | 'stop';
+    readonly error: RemoteFailure;
+}
+
+
+/* === chunk 62 (JS string literal) === */
+export type PropsHooks<HS extends HooksSources> = {
+    [N in keyof HS & string as `use${Capitalize<N>}
+`]: SnapshotSelectorHook<HS[N] extends HostObservable<infer T> ? T : never>;
+}
+;
+  
+
+/* === chunk 63 (JS string literal) === */
+export type PropsKeyedHooks<HS extends KeyedHooksSources> = {
+    [N in keyof HS & string as `use${Capitalize<N>}
+`]: KeyedSnapshotSelectorHook<HS[N] extends (key: string) => HostObservable<infer T> | undefined ? T : never>;
+}
+;
+  
+
+/* === chunk 64 (JS string literal) === */
+export type PropsLocale<N> = N extends keyof LocaleNamespaceMap & string ? {
+    t: TranslateNS<N>;
+}
+ : object;
+  
+
+/* === chunk 65 (JS string literal) === */
+export interface PropsRenderFactories {
+    renderFactorySlot: RenderFactorySlot;
+}
+
+
+/* === chunk 66 (JS string literal) === */
+export type PropsRenderSlots<S extends keyof SlotMap & string> = {
+    renderSlot: RenderSlotFn<Exclude<S, ChainKeysOf<S>>>;
+    readonly __renders?: ((key: S) => void) | undefined;
+}
+ & ([
+    ChainKeysOf<S>
+] extends [
+    never
+] ? object : {
+    renderSlotChain: <K extends ChainKeysOf<S>>(key: K, owner: OwnerOf<K>, opts?: ChainRenderOpts) => ReactNode;
+}
+) & ([
+    Extract<ScopeOf<S>, 'session' | 'session-maybe'>
+] extends [
+    never
+] ? object : {
+    SessionProvider: SessionProviderComponent;
+}
+);
+  
+
+/* === chunk 67 (JS string literal) === */
+export type PropsSlotHooks<HS extends object> = {
+    [N in keyof HS & string as `use${Capitalize<N>}
+`]: BoundHookOf<HS[N]>;
+}
+;
+  
+
+/* === chunk 68 (JS string literal) === */
+export type PropsStore<H> = H extends StoreHandle<infer T, infer A> ? {
+    useStore: SnapshotSelectorHook<T>;
+    actions: BakedActions<T, A>;
+}
+ : object;
+  
+
+/* === chunk 69 (JS string literal) === */
+export type QueueAction = {
+    readonly kind: 'edit';
+    readonly content: readonly TextBlock[];
+}
+ | {
+    readonly kind: 'remove';
+}
+ | {
+    readonly kind: 'steer';
+}
+;
+  
+
+/* === chunk 70 (JS string literal) === */
+export interface RegisterFactory {
+    <F extends keyof SlotFactoryMap & string>(options: RegisterFactoryOptions<F>, component: SlotComponent<FactoryComponentPropsOf<F>>): () => void;
+}
+
+
+/* === chunk 71 (JS string literal) === */
+export type RegisterFactoryOptions<F extends keyof SlotFactoryMap & string> = {
+    name: F;
+    scope: FactoryDefOf<F>['scope'];
+}
+ & FactoryField<F, 'children', FactoryChildrenOf<F>> & FactoryField<F, 'store', FactoryStoreOf<F> | (() => FactoryStoreOf<F>)> & FactoryField<F, 'inject', (...args: FactoryInjectParams<F>) => FactoryInjectOf<F>> & FactoryField<F, 'locale', FactoryLocaleOf<F>> & FactoryField<F, 'slots', RuntimeFactorySlots<F>> & FactoryCollisionCheck<F> & FactoryChildrenCheck<F>;
+  
+
+/* === chunk 72 (JS string literal) === */
+export interface RemoteHostFacts {
+    readonly home: string | undefined;
+    readonly isLoopback: boolean;
+}
+
+
+/* === chunk 73 (JS string literal) === */
+export class RemoteStream<Item> implements AsyncIterable<RemoteStreamItem<Item>> {
+    constructor(private readonly connection: Pick<ConnectionHandle, 'generation'>, private readonly options: RemoteStreamOptions<Item>);
+    get signal(): AbortSignal;
+    restart(): void;
+    dispose(): Promise<void>;
+    [Symbol.asyncIterator](): AsyncIterator<RemoteStreamItem<Item>>;
+}
+
+
+/* === chunk 74 (JS string literal) === */
+export class RemoteStreamCarrierError extends Error {
+    constructor(message: string, options?: ErrorOptions);
+}
+
+
+/* === chunk 75 (JS string literal) === */
+export interface RemoteStreamItem<Item> {
+    readonly generation: number;
+    readonly value: Item;
+    readonly signal: AbortSignal;
+    accept(): void;
+}
+
+
+/* === chunk 76 (JS string literal) === */
+export interface RemoteStreamOptions<Item> {
+    readonly name: string;
+    readonly open: (signal: AbortSignal) => AsyncIterable<Item>;
+    readonly ended: (accepted: boolean) => Error;
+    readonly carrierFailed?: (error: RemoteStreamCarrierError) => void;
+}
+
+
+/* === chunk 77 (JS string literal) === */
+export type RenderFactorySlot = <F extends keyof SlotFactoryMap & string>(name: F, props: FactoryInputPropsOf<F>, options?: {
+    slots?: Partial<{
+        [N in FactoryLocalNameOf<F>]: FactoryLocalComponent<F, N>;
+    }
+>;
+    fallback?: ReactNode;
+}
+) => ReactNode;
+  
+
+/* === chunk 78 (JS string literal) === */
+export interface SessionAreaProps {
+    readonly session?: SlotScopeTargetMap[keyof SlotScopeTargetMap & 'session'] | undefined;
+    empty?: (() => ReactNode) | undefined;
+    children: ReactNode;
+}
+
+
+/* === chunk 79 (JS string literal) === */
+export interface SessionAssistantSettlementEntry {
+    readonly type: 'event';
+    readonly event: SessionEvent<'assistant/message'> | SessionEvent<'assistant/attempt'>;
+}
+
+
+/* === chunk 80 (JS string literal) === */
+export interface SessionBinding {
+    readonly sessionId: SessionId;
+    readonly session: SessionFace;
+    readonly eventSource: SessionEventSource;
+    readonly ctx: AgentContext;
+}
+
+
+/* === chunk 81 (JS string literal) === */
+export type SessionEventChange = {
+    readonly kind: 'replace';
+    readonly entries: readonly SessionEventLikeEntry[];
+}
+ | {
+    readonly kind: 'prepend';
+    readonly entries: readonly SessionEventLikeEntry[];
+}
+ | {
+    readonly kind: 'append';
+    readonly entries: readonly SessionEventLikeEntry[];
+}
+ | {
+    readonly kind: 'settle-assistant';
+    readonly attemptId: LlmAttemptId;
+    readonly entry?: SessionAssistantSettlementEntry;
+}
+;
+  
+
+/* === chunk 82 (JS string literal) === */
+export type SessionEventLikeEntry = {
+    readonly type: 'event';
+    readonly event: SessionEvent;
+}
+ | {
+    readonly type: 'transient';
+    readonly event: AssistantLiveChunkEvent;
+}
+;
+  
+
+/* === chunk 83 (JS string literal) === */
+export interface SessionEventWindow {
+    readonly entries: readonly SessionEventLikeEntry[];
+    readonly hasMore: boolean;
+    readonly revision: number;
+    readonly change: SessionEventChange;
+}
+
+
+/* === chunk 84 (JS string literal) === */
+export type SessionIdOf = SessionStandardProps extends {
+    sessionId: infer S;
+}
+ ? S : string;
+  
+
+/* === chunk 85 (JS string literal) === */
+export interface SessionListState {
+    ids: SessionId[];
+    byId: Record<SessionId, SessionSummary>;
+    phase: SessionListPhase;
+    projectionsBySession: Readonly<Record<SessionId, SessionProjectionSnapshot>>;
+}
+
+
+/* === chunk 86 (JS string literal) === */
+export interface SessionMaybeStandardProps {
+}
+
+
+/* === chunk 87 (JS string literal) === */
+export interface SessionProjectionSnapshot {
+    readonly values: Readonly<Partial<SessionProjectionMap>>;
+    readonly state: 'idle' | 'loading' | 'ready' | 'migration-required' | 'error';
+    readonly error: RemoteFailure | null;
+}
+
+
+/* === chunk 88 (JS string literal) === */
+export interface SessionReference extends Disposable {
+    readonly sessionId: SessionId;
+    readonly binding: SessionBinding;
+    readonly ready: Promise<SessionBinding>;
+    release(): void;
+}
+
+
+/* === chunk 89 (JS string literal) === */
+export interface SessionReferenceSourceMap {
+    controllerOperation: unknown;
+    gateway: unknown;
+}
+
+
+/* === chunk 90 (JS string literal) === */
+export interface SessionRetainInfo {
+    readonly referenceCount: number;
+    readonly retainedBy: Readonly<Partial<Record<SessionReferenceSource, number>>>;
+}
+
+
+/* === chunk 91 (JS string literal) === */
+export interface SessionRetainOptions {
+    readonly source: SessionReferenceSource;
+    readonly signal?: AbortSignal | undefined;
+}
+
+
+/* === chunk 92 (JS string literal) === */
+export interface SessionSearchResultItem {
+    sessionId: SessionId;
+    snippet: string;
+}
+
+
+/* === chunk 93 (JS string literal) === */
+export interface SessionSnapshot {
+    readonly sessionId: SessionId;
+    readonly pendingSubmissions: readonly PendingSubmission[];
+    readonly running: boolean;
+    readonly subagent: {
+        readonly address: SubagentAddress;
+        readonly parentAvailable?: boolean;
+    }
+ | null;
+    readonly removed: boolean;
+    readonly openState: OpenState;
+    readonly openError: RemoteFailure | null;
+    readonly hasMore: boolean;
+    readonly loadingOlder: boolean;
+    readonly promptError: PromptError | null;
+    readonly blank: boolean;
+    readonly lastAgentError: string | null;
+    readonly promptAttempted: boolean;
+    readonly awaitingFirstTurn: boolean;
+}
+
+
+/* === chunk 94 (JS string literal) === */
+export interface SessionStandardProps {
+}
+
+
+/* === chunk 95 (JS string literal) === */
+export class SlotCore {
+    constructor();
+    readonly registerFactory: RegisterFactory;
+    factory(name: string): StoredFactory | undefined;
+    factoryVersion(name: string): number;
+    subscribeFactory(name: string, listener: () => void): () => void;
+    isFactoryLive(definition: StoredFactory): boolean;
+    register<K extends keyof SlotMap & string, const EntryKey extends EntryKeyOf<K> = EntryKeyOf<K>, const D extends ChildrenDecl = Record<never, never>, H extends StoreDecl | undefined = undefined, M = never, N extends (keyof LocaleNamespaceMap & string) | undefined = undefined, C extends SlotComponent<never> = SlotComponent<never>>(options: BaseOptions<K, EntryKey, D, H, M, N> & {
+        inject?: undefined;
+    }
+, component: C & SlotComponent<ComposedProps<K, NoInfer<EntryKey>, keyof NoInfer<D> & keyof SlotMap & string, HandleOf<NoInfer<H>>, object, NoInfer<M>, NoInfer<N>>> & RendersCheck<C, D>): () => void;
+    register<K extends keyof SlotMap & string, I extends object, const EntryKey extends EntryKeyOf<K> = EntryKeyOf<K>, const D extends ChildrenDecl = Record<never, never>, H extends StoreDecl | undefined = undefined, M = never, N extends (keyof LocaleNamespaceMap & string) | undefined = undefined, C extends SlotComponent<never> = SlotComponent<never>>(options: BaseOptions<K, EntryKey, D, H, M, N> & {
+        inject: (...args: InjectParams<K, H>) => I;
+    }
+, component: C & SlotComponent<ComposedProps<K, NoInfer<EntryKey>, keyof NoInfer<D> & keyof SlotMap & string, HandleOf<NoInfer<H>>, I, NoInfer<M>, NoInfer<N>>> & RendersCheck<C, D>): () => void;
+    register(options: ErasedOptions, component: unknown): () => void;
+    isLive(entry: StoredEntry): boolean;
+    entries(key: string): readonly StoredEntry[];
+    entriesOfSlot(key: string): readonly StoredEntry[];
+    spec<K extends keyof SlotMap & string>(key: K): SlotSpec<SlotMap[K]> | undefined;
+    specDynamic(key: string): SlotSpec<SlotEntryDef> | undefined;
+    snapshot(root?: string): LiveCompositionNode[];
+    declarationEpoch(key: string): number;
+    subscribe(key: string, fn: () => void): () => void;
+    subscribeDeclaration(key: string, fn: () => void): () => void;
+    getVersion(key: string): number;
+    onMutate(fn: (key: string) => void): () => void;
+    reportEntryError(key: string, entry: StoredEntry, error: unknown, info: {
+        abdicate: boolean;
+    }
+): void;
+    reportFactoryError(name: string, registration: StoredEntry | StoredFactory, error: unknown): void;
+    onEntryError(fn: (key: string, registration: StoredEntry | StoredFactory, error: unknown, info: {
+        abdicated: boolean;
+    }
+) => void): () => void;
+}
+
+
+/* === chunk 96 (JS string literal) === */
+export interface SlotEntryDef {
+    kind: SlotKind;
+    scope: SlotScope;
+    inline?: true;
+    owner?: object;
+    keyProps?: Record<string, object>;
+    hookContext?: unknown;
+    inject?: object;
+}
+
+
+/* === chunk 97 (JS string literal) === */
+export interface SlotFactoryMap {
+}
+
+
+/* === chunk 98 (JS string literal) === */
+export type SlotInjectFace<I extends object> = I extends {
+    hooks: infer HS extends object;
+}
+ ? Omit<I, 'hooks'> & PropsSlotHooks<HS> : I;
+  
+
+/* === chunk 99 (JS string literal) === */
+export type SlotInjectOf<K extends keyof SlotMap & string> = SlotMap[K] extends {
+    inject: infer Injected extends object;
+}
+ ? Injected : object;
+  
+
+/* === chunk 100 (JS string literal) === */
+export interface SlotMap {
+}
+
+
+/* === chunk 101 (JS string literal) === */
+export interface SlotScopeTargetMap {
+}
+
+
+/* === chunk 102 (JS string literal) === */
+export type SlotSpec<E extends SlotEntryDef> = {
+    kind: E['kind'];
+    scope: E['scope'];
+    inline?: true;
+}
+ & ('inject' extends keyof E ? E extends {
+    inject: infer Injected extends object;
+}
+ ? {
+    inject: Injected;
+}
+ : {
+    inject?: object;
+}
+ : {
+    inject?: never;
+}
+);
+  
+
+/* === chunk 103 (JS string literal) === */
+export interface StartSessionOptions extends DraftInitializationOptions {
+    readonly agentPreset?: string;
+}
+
+
+/* === chunk 104 (JS string literal) === */
+export interface StoredEntry {
+    component: unknown;
+    options: {
+        key?: string;
+        id?: string;
+        order?: number;
+        label?: SlotLabel;
+        priority?: number;
+    }
+;
+    select?: ((owner: never) => unknown) | undefined;
+    inject?: ((...args: never[]) => Record<string, unknown>) | undefined;
+    children?: Readonly<Record<string, SlotSpec<SlotEntryDef>>> | undefined;
+    store?: StoreDecl | undefined;
+    locale?: string | undefined;
+    registrant?: string | undefined;
+}
+
+
+/* === chunk 105 (JS string literal) === */
+export interface StoredFactory {
+    readonly name: string;
+    readonly component: unknown;
+    readonly scope: SlotScope;
+    readonly children?: Readonly<Record<string, SlotSpec<SlotEntryDef>>> | undefined;
+    readonly store?: StoreDecl | undefined;
+    readonly inject?: ((...args: never[]) => Record<string, unknown>) | undefined;
+    readonly locale?: string | undefined;
+    readonly slots?: Readonly<Record<string, {
+        scope: SlotScope;
+    }
+>> | undefined;
+    readonly registrant?: string | undefined;
+}
+
+
+/* === chunk 106 (JS string literal) === */
+export interface StoreHandle<T, A extends ActionsDecl<T>> {
+    readonly spec: StoreSpec<T, A>;
+    create(scopeKey?: string): StoreInstance<T, A>;
+}
+
+
+/* === chunk 107 (JS string literal) === */
+export interface StoreInstance<T, A extends ActionsDecl<T>> {
+    readonly actions: BakedActions<T, A>;
+    getSnapshot(): T;
+    subscribe(fn: () => void): () => void;
+    clearPersisted(): void;
+}
+
+
+/* === chunk 108 (JS string literal) === */
+export interface StoreSpec<T, A extends ActionsDecl<T>> {
+    init: () => T;
+    persist?: string;
+    actions: A;
+}
+
+
+/* === chunk 109 (JS string literal) === */
+export interface SubmissionHandle {
+    readonly requestId: SessionRequestId;
+    abandon(): void;
+}
+
+
+/* === chunk 110 (JS string literal) === */
+export interface ThemeDefinition {
+    id: string;
+    colorScheme: 'light' | 'dark';
+    tokens: ThemeTokens;
+}
+
+
+/* === chunk 111 (JS string literal) === */
+export interface ThemeSnapshot {
+    preference: ThemePreference;
+    fontSizes: FontSizes;
+    fontFamilies: FontFamilies;
+    active: ThemeDefinition;
+    themes: readonly ThemeDefinition[];
+    revision: number;
+}
+
+
+/* === chunk 112 (JS string literal) === */
+export interface ThemeTokenModes {
+    light: string;
+    dark: string;
+}
+
+
+/* === chunk 113 (JS string literal) === */
+export interface WorkspaceView {
+    readonly workspaceId: WorkspaceId;
+    readonly path: string;
+    readonly title: string;
+    readonly sessionIds: readonly SessionId[];
+    readonly createdAt: string;
+    readonly updatedAt: string;
+}
+
+
+/* === chunk 114 (JS string literal) === */
+ctx[${JSON.stringify(key)}
+]
+
+/* === chunk 115 (JS string literal) === */
+ctx.get(${JSON.stringify(service.key)}
+)
+
+/* === chunk 116 (JS string literal) === */
+fixed by the owner's key table { [Kind in ChatNodeKind]: { node: ChatNode<Kind> }
+ }
+, already taken: assistant-step, command, command-input, compaction, context, manual-compaction, model-retry, question-reply, steering, system-prompt, tool-call, turn-error, turn-max-tokens, turn-process, turn-tail, turn-trigger, unknown, user, workflow-run
+
+/* === chunk 117 (JS string literal) === */
+fixed by the owner's key table { [Id in UserTextId]: { node: UserTextNode<Id> }
+ }
+, already taken: command, file, folder, secret, session, skill, text
+
+/* === chunk 118 (JS string literal) === */
+fixed by the owner's key table { [K in ToastKind]: ToastNotice<K> }
+, already taken: archived, archivedNotOpenable, createFailed, defaultWorkspaceFailed, forkRequiresOpen, pinFailed, sessionIdCopied, sessionIdCopyFailed, shortcutForkFailed, stoppedAndArchived, unpinFailed
+
+/* === chunk 119 (JS string literal) === */
+cordis-client-runner: inspect ${provider.manifest.id}
+
+
+/* === chunk 120 (JS string literal) === */
+[cordis-client-runner] reporting a render failure of ${pluginId}
+ failed:
+
+/* === chunk 121 (JS string literal) === */
+[cordis-client-runner] reporting a render failure of ${pluginId}
+ failed:
+
+/* === chunk 122 (JS string literal) === */
+[cordis-client-runner] reporting a guard failure of ${pluginId}
+ failed:
+
+/* === chunk 123 (JS string literal) === */
+[cordis-client-runner] reporting a guard failure of ${pluginId}
+ failed:
+
+/* === chunk 124 (JS string literal) === */
+[cordis-client-runner] inspect query ${request.provider}
+.${request.method}
+ failed:
