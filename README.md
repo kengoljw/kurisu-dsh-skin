@@ -43,7 +43,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\uninstall.ps1  # 移除包
 - **CSS 变量作用域**：`--ks-*` 必须声明在 `body`——ThemePresenter 把 `--dsw-*` 写成 `document.body` 的内联样式，而 `var()` 只在声明它的元素上解析。主题 token 是内联样式，普通样式表压不过，所以面板三档用 `!important`。
 - **槽位**：`sidebar.brand.mark` / `conversation.hero.brand.mark` 是 `single` 槽，以 `priority: -10` 注册并包 try/catch（同优先级重复注册会抛，负优先级才压得过官方 `brand-official`）。设置行 `settings.general.item`（id `kurisu-skin`）、世界线计 `sidebar.footer.action`（`list` 槽，id `kurisu-divergence-meter`）都是纯追加。
 - **启动屏的两个注入点**：宿主侧 `lib/index.js` 在 `webserver/index-inject` 推 `style` / `html` / `script` 三行，渲染端 `PZ()` 在应用挂载前落地；原生 t=0 首帧只能改 `app.asar → lib/web-document.js → LOADING_STYLE`。asar 用**头部手术**：把该 entry 的 `offset/size` 指到归档末尾追加的新内容、删其 `integrity`，只重写头部 JSON，不重打包 180 MB（fuse `EnableEmbeddedAsarIntegrityValidation` 已禁用）。
-- **升级与回滚**：DSH 升级会覆盖 `app.asar`，升级后重跑 `node research/patch-asar-splash.mjs --apply`（幂等；另有 `--dry-run` / `--verify` / `--restore`）。原始 512 字节备份在 `asar-original-loading-style.txt`。
+- **升级与回滚**：DSH 升级会覆盖 `app.asar`，升级后重跑 `node research/patch-asar-splash.mjs --apply`（幂等；另有 `--dry-run` / `--verify` / `--restore`）。原始内容备份由 `research/native-splash/` 维护：`--apply` 时自动生成 `web-document.orig.js` / `header.orig.json` / `backup-manifest.json` 三份文件，`--restore` 用它们还原。
 - **序列只有一个时钟**：`p = max(真实 --dsh-boot-arc, 墙钟地板, lastP)`，弧线最多领先诚实时钟 `0.08p`；`MIN_FILM_MS = 16000` 是播放下限而非延迟，应用早于 16s 就绪也不硬切；`finish()` 要同时满足「shell 已撤」和「已收敛」。快启动走「切到收敛拍」，不是把整部片压进 1s。
 - **模板字面量**：`host.template.js` / `client.template.js` 里不能出现反引号、`${}` 或裸反斜杠（含注释）；`sg-nixie.js` 用法注释含 `<script>`，内联必须走 `script.textContent` 而非裸 HTML。注入行按 `PZ` 顺序执行，组件脚本要排在加载屏脚本之前。
 - **性能**：只动 `transform` / `opacity` / `filter`，全屏层加 `will-change: opacity` 拿独立合成层；溶解期停掉 rAF 与全部装饰绘制。
